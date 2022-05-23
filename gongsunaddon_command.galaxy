@@ -1,0 +1,232 @@
+//2020 by GongSunink 
+int gv_enemy = 9;
+int gv_ally = 1;
+unitgroup summonedUnit;
+
+unit creatHero(int player,int id){
+    unit heroUnit;
+
+    if (gf_52AD32BF(id))
+        {
+            heroUnit = gf_F0979A0A(player, id);
+            if ((id == 1))
+            {
+                gf_FD591F27(player, id, heroUnit);
+            }
+            else if ((id == 4))
+            {
+                gf_FD591F27(player, id, heroUnit);
+            }
+            else if ((id == 6))
+            {
+                gf_FD591F27(player, id, heroUnit);
+            }
+            else if ((id == 7))
+            {
+                gf_FD591F27(player, id, heroUnit);
+            }
+            else if ((id == 8))
+            {
+                gf_FD591F27(player, id, heroUnit);
+            }
+            else if ((id == 10))
+            {
+                UnitBehaviorAdd(UnitLastCreated(), "dbdo_10_1_0t", UnitLastCreated(), 1);
+            }
+            else if ((id == 20))
+            {
+                UnitBehaviorAdd(UnitLastCreated(), "dbdo20_1_0t2", UnitLastCreated(), 1);
+            }
+            else if ((id == 13))
+            {
+                gf_A4600D8D(player, id, heroUnit);
+            }
+            else if ((id == 14))
+            {
+                gf_A4600D8D(player, id, heroUnit);
+            }
+            else if ((id == 18))
+            {
+                UnitAbilityShow(UnitLastCreated(), "dbnu18_1_0t", true);
+                UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
+                UnitAbilityShow(UnitLastCreated(), "dbnu18_1_2w", true);
+                UnitAbilityShow(UnitLastCreated(), "dbnu18_1_3e", true);
+                UnitAbilityShow(UnitLastCreated(), "dbnu18_1_4r", true);
+                UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_0t", true);
+                UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
+                UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_2w", true);
+                UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_3e", true);
+                UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_4r", true);
+            }
+            else if ((id == 9))
+            {
+                UnitBehaviorAddPlayer(UnitLastCreated(), "dbdo09_1_0t_17", player, 1);
+                UnitAbilityShow(UnitLastCreated(), "dbnu09_1_0t", true);
+                UnitAbilityEnable(UnitLastCreated(), "dbnu09_1_0t", true);
+            }
+            UnitSetPropertyFixed(gv_71C054E5[player], c_unitPropEnergyPercent, 100.0);
+        }
+    return UnitLastCreated();
+}
+
+//通过id创建一个空英雄
+unit createEmpHero(int player,int id,int side){
+    if (side == 1){
+        //ally
+        libNtve_gf_CreateUnitsWithDefaultFacing(1,gv_367C7760[id],0,gv_ally, PointFromName("test"));          
+    }else{
+        libNtve_gf_CreateUnitsWithDefaultFacing(1,gv_367C7760[id],0,gv_enemy, PointFromName("test"));
+    }
+    //升级行为
+    // UnitBehaviorAddPlayer(UnitLastCreated(), "dbdo_ex", 1, 1);
+    
+    DialogControlSetEnabled(gv_3050FA16[player][1], PlayerGroupAll(), true);
+    //show or hide 技能
+    // gf_ED9D4333(UnitLastCreated(), player);
+
+    UnitBehaviorAddPlayer(UnitLastCreated(), "dbdo_ex", player, 1);
+    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie", player, 1);
+    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie4", player, 1);
+    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie42", player, 1);
+    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie2", player, 1);
+
+    UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
+
+    // UnitGroupAdd(summonedUnit,UnitLastCreated());
+    return UnitLastCreated();
+}
+
+unit upgradeHero(){
+    return UnitLastCreated();
+}
+
+//生成一个英雄 p1 英雄id
+void cmd_summon(int player,string p1,string p2){
+    
+    createEmpHero(player,StringToInt(p1),StringToInt(p2));
+}
+
+void cmd_effect(int player,string p1,string p2){
+
+}
+
+//测试暴击次数 times测试次数 criticalpoint暴击点数
+void testCriticalHit(int player,int times,int criticalPoint){
+
+    int i = 0;
+    fixed random = 0;
+    int BigHitTimes = 0;
+
+    for (; i < times ; i+=1){
+        random = RandomFixed(0.0,100.0);
+        showMsg(1,"第"+IntToString(times+1)+"次随机:"+FixedToString(random,2));
+        if(random < IntToFixed(criticalPoint) * 2 ){
+            BigHitTimes +=1;
+        }
+    }
+
+    showMsg(1,"随机结束，共暴击"+IntToString(BigHitTimes)+"次");
+    
+
+}
+
+void cmd_testCH(int player,string p1,string p2){
+    testCriticalHit(player,StringToInt(p1),StringToInt(p2));
+}
+
+//暴击由randomfixed(0.0,100.0)实现，如果这个数值小于暴击加点则算作暴击
+void testRandomFixed(int player,int times){
+    int[31] criticalHitArr;
+    int i = 0;
+    fixed random = 0.0;
+    int randomToint = 0;
+    string report ="";
+    int j = 0;
+
+    for (; i < times ; i+=1){
+        //随机生成浮点数
+        random = RandomFixed(0.0,100.0);
+        //将浮点数转换为int
+        randomToint = FixedToInt(random);
+
+        //fixedtoint会直接忽略小数位，大于60的浮点数不被计算
+        if (randomToint < 60){
+            //如果数被2整除则直接存入数组，不能则-1再存入
+            if (randomToint % 2 == 0){
+                //由于暴击点数是一点增加百分之2的暴击，这里整体除以2
+                for (j = randomToint / 2;j <= 30;j += 1){
+                    criticalHitArr[j] += 1;
+                }
+            }else{
+                //介于两者中间时+1 算作上一层的
+                for (j = (randomToint + 1) / 2;j <= 30;j += 1){
+                    criticalHitArr[j] += 1;
+                }
+            }
+        }else{
+            criticalHitArr[0] += 1;
+            //not hited
+        }
+        // showMsg(1,FixedToString(random,2));  
+        // showMsg(1,IntToString(randomToint));
+        // Wait(2,c_timeReal);
+        
+    }
+
+    i=1;
+    //输出
+    for (; i < 31 ; i += 1){
+        report += IntToString(i * 2)+"%:"+IntToString(criticalHitArr[i])+"次|";
+        if ((i) % 4 == 0){
+            report +="\n";
+        }
+    }
+    showMsg(1,report);
+
+    
+}
+
+void cmd_testRandomFixed(int player,string p1){
+    testRandomFixed(player,StringToInt(p1));
+}
+
+void cmd_clearUnit(int player){
+    UnitGroupLoopBegin(summonedUnit);
+
+    for (;!UnitGroupLoopDone();UnitGroupLoopStep()){
+        UnitKill(UnitGroupLoopCurrent());
+    }
+    UnitGroupLoopEnd();
+}
+//
+bool tg_addons_commands_init(bool testConds, bool runActions){
+    string msg = EventChatMessage(false);
+    string cmd = StringWord(msg,1);
+    string param = StringWord(msg,2);
+    string param2 = StringWord(msg,3);
+    int player = EventPlayer();
+    unit hero = getHero(player);
+    if (cmd == "-summon"){
+        cmd_summon(player,param,param2);
+        return true;
+    }
+    else if (cmd == "-effect"){
+        
+    }
+    else if (cmd == "-addbehavior"){
+ 
+    }
+    else if (cmd == "-showdamagedialog"){
+
+    }
+    else if (cmd == "-testCH"){
+        cmd_testCH(player,param,param2);
+    }
+    else if (cmd == "-testRandomFixed"){
+        cmd_testRandomFixed(player,param);
+    }
+    else if (cmd == "-clearUnit"){
+        cmd_clearUnit(player);
+    }
+    return true;
+}
