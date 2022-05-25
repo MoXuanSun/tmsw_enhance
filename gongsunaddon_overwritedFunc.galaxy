@@ -1,6 +1,8 @@
 
 //gf_DE60CDEF(int lp_5962A3E0)
 //等级显示与升级所需经验进度条更新函数
+//覆盖为根据单位经验值和等级更新，
+//原本是通过一个玩家数组中存单位的经验值，但训练营一个玩家可以拥有多个单位，所以原来的不可用
 void updateExpBar(int player,unit inUnit)
 {
     fixed levelExp;
@@ -33,15 +35,18 @@ void updateExpBar(int player,unit inUnit)
 
 //gf_91088DA7
 //显示英雄升级时可以升级的技能
+//原来的也是相对于玩家数组的，玩家拥有多个单位时不可使用
 void showSkillUpgradeBtn(int player,unit inUnit){
 
+    
+
  
-    DialogControlSetEnabled(gv_99F9B79B[0], PlayerGroupSingle(ePlayer), true);
-    DialogControlSetEnabled(gv_99F9B79B[1], PlayerGroupSingle(ePlayer), true);
-    DialogControlSetEnabled(gv_99F9B79B[2], PlayerGroupSingle(ePlayer), true);
-    DialogControlSetEnabled(gv_99F9B79B[3], PlayerGroupSingle(ePlayer), true);
-    DialogControlSetVisible(gv_81AD7FB9[lv_AD3D5FED], PlayerGroupSingle(ePlayer), true);
-    DialogControlSetVisible(gv_99F9B79B[lv_AD3D5FED], PlayerGroupSingle(ePlayer), true);
+    DialogControlSetEnabled(gv_99F9B79B[0], PlayerGroupSingle(player), true);
+    DialogControlSetEnabled(gv_99F9B79B[1], PlayerGroupSingle(player), true);
+    DialogControlSetEnabled(gv_99F9B79B[2], PlayerGroupSingle(player), true);
+    DialogControlSetEnabled(gv_99F9B79B[3], PlayerGroupSingle(player), true);
+    DialogControlSetVisible(gv_81AD7FB9[lv_AD3D5FED], PlayerGroupSingle(player), true);
+    DialogControlSetVisible(gv_99F9B79B[lv_AD3D5FED], PlayerGroupSingle(player), true);
 }
 
 void initGlobalValues(){
