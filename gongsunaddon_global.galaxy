@@ -1,0 +1,7 @@
+//e技能upgradestr
+string[10] gv_heroEstatStr;
+
+
+void updateExpBar(int player,unit inUnit);
+
+void showSkillUpgradeBtn(int player,unit inUnit);

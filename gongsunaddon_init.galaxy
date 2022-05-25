@@ -105,7 +105,7 @@ void loadTestMode(){
     TriggerExecute(gt_A21467A7, true, true);
 
     // 触发于肉兔e技能对应效果，兴奋剂效果，hy_a_won效果(净化 对应行为Dragperfecspellb)
-    // runactions为true时除了爱丽丝以外会被该触发器忽略
+    // testConds为true时除了爱丽丝以外会被该触发器忽略
     // 通过EventPlayerEffectUsedUnitOwner获得施法者
     // 传入gf_114177D8
     // 转换为行为   
@@ -177,6 +177,7 @@ void loadTestMode(){
 
     //随机播放音乐
     gf_1C2570FD(1);
+
 
     PlayerOptionOverride(1, "selectuncontrolable", "1");
     VisRevealerCreate(1, RegionEntireMap());
@@ -271,6 +272,8 @@ void hackTriggers(){
 
 void initaddons(){
     hackTriggers();
+    initOverWrite();
+    initGlobalValues();
     TriggerAddEventMapInit(TriggerCreate("tg_addons_ui_init"));
     TriggerAddEventChatMessage(TriggerCreate("tg_addons_commands_init"), c_playerAny, "", true);
 }

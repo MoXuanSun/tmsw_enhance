@@ -1,0 +1,238 @@
+
+
+//gt_5E391F04 覆盖
+//不显示，可以选择敌方英雄 此触发器弃用
+bool gt_updateEnemyHUD(bool testConds, bool runActions){
+   
+    int ePlayer = EventPlayer();
+    int eUnitOwner = UnitGetOwner(EventUnit());
+    unit ePlayerCurrentHeroUnit = gv_71C054E5[ePlayer];
+    int value;
+    int index;
+    int propCount = 7;
+    //数值个数
+
+    //测试模式下不显示
+    if (gv_AC56085D){
+        return true;
+    }
+
+    if (testConds)
+    {
+        if (!((gv_BB284D6D != 5)))
+        {
+            return false;
+        }
+        if (!((UnitBehaviorCount(EventUnit(), "HallucinationTimedLife") == 0)))
+        {
+            return false;
+        }
+    }
+
+    if (!runActions){
+        return true;
+    }
+
+    //判定是否是敌方
+    if (ePlayer != eUnitOwner){
+        //设置image
+        gf_0B99E26F(ePlayer, eUnitOwner);
+        //修改为通过getunittype获得heroidstr，这样创建多个就不会出现问题
+        libNtve_gf_SetDialogItemImage(gv_2DED9336[1], gv_AA1BDB6C[StringToInt(StringSub(UnitGetType(EventUnit()),7,8))], PlayerGroupSingle(ePlayer));
+        libNtve_gf_SetDialogItemText(gv_2DED9336[2], FixedToTextAdvanced(gv_893C301B[eUnitOwner], c_formatNumberStyleNormal, true, 0, 1), PlayerGroupSingle(ePlayer));
+        libNtve_gf_SetDialogItemColor(gv_2DED9336[3], libNtve_gf_ConvertPlayerColorToColor(PlayerGetColorIndex(eUnitOwner, false)), PlayerGroupSingle(ePlayer));
+        libNtve_gf_SetDialogItemText(gv_2DED9336[3], PlayerName(eUnitOwner), PlayerGroupSingle(ePlayer));
+
+        // for (index = 0;index <= propCount; i+=1){
+        //     libNtve_gf_SetDialogItemText(gv_D33859CA[index], 
+        //         FixedToTextAdvanced(gv_9CB902A4[eUnitOwner][gv_B48492BD[index]],
+        //              c_formatNumberStyleNormal, true, 0, 2), PlayerGroupSingle(ePlayer));
+        // } 
+    
+
+        libNtve_gf_SetDialogItemText(gv_D33859CA[8], 
+            (IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropLife, c_unitPropCurrent)))
+             + (StringExternal("Param/Value/858C3123") + 
+             IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropLifeMax, c_unitPropCurrent))))),
+              PlayerGroupSingle(ePlayer));
+        
+             libNtve_gf_SetDialogItemText(gv_D33859CA[9], 
+            (IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropEnergy, c_unitPropCurrent)))
+             + (StringExternal("Param/Value/7EE57AF9") + 
+             IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropEnergyMax, c_unitPropCurrent))))),
+              PlayerGroupSingle(ePlayer));
+        
+             value = FixedToInt((268.0 * (UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropLifePercent, c_unitPropCurrent) * 0.01)));
+        if ((value == 0))
+        {
+            value = 1;
+        }
+        DialogControlSetSize(gv_2DED9336[4], PlayerGroupSingle(ePlayer), value, 16);
+        value = FixedToInt((268.0 * (UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropEnergyPercent, c_unitPropCurrent) * 0.01)));
+        if ((value == 0))
+        {
+            value = 1;
+        }
+        DialogControlSetSize(gv_2DED9336[5], PlayerGroupSingle(ePlayer), value, 16);
+        DialogSetVisible(gv_4EE04C84, PlayerGroupSingle(ePlayer), true);
+    }
+
+    return true;
+}
+
+//gt_D0366A97 覆盖
+bool gt_onUnitGainLevel(bool testConds, bool runActions){
+    
+    int eUnitLevel = UnitLevel(EventUnit());
+    int ePlayer = EventPlayer();
+    unit eUnit = EventUnit();
+    
+    if (testConds)
+    {
+        if (!((UnitBehaviorCount(EventUnit(), "dbdo_ex3") == 0)))
+        {
+            return false;
+        }
+        if (!((UnitBehaviorCount(EventUnit(), "HallucinationTimedLife") == 0)))
+        {
+            return false;
+        }
+    }
+    if (!runActions)
+    {
+        return true;
+    }
+    
+    //升级进度条
+    //修改为UnitLevel(EventUnit()) >= 24
+    //unitLevel和UnitXPgetCurrentLevel的结果相同
+    if (eUnitLevel >= 24)
+    {
+        DialogControlSetSize(gv_5C4043F8.lv_E25A8ED0, PlayerGroupSingle(ePlayer), 88, 16);
+    }
+    else
+    {
+        updateExpBar(ePlayer,eUnit);
+    }
+
+    // lv_CA6BF814 = 0;
+    // for (; ((autoF8F70090_ai >= 0 && lv_CA6BF814 <= autoF8F70090_ae) || (autoF8F70090_ai < 0 && lv_CA6BF814 >= autoF8F70090_ae)); lv_CA6BF814 += autoF8F70090_ai)
+    // {.
+    //     auto15CE3F4F_val = gv_385F7DDF[EventPlayer()].lv_938D9C7F[(lv_CA6BF814 + 1)][gv_BB156610.lv_0195430E[EventPlayer()][(lv_CA6BF814 + 1)]];
+    //     if (auto15CE3F4F_val == 6)
+    //     {
+    //         lv_C2D36F8B[lv_CA6BF814] = 0;
+    //         lv_3090D3FC[lv_CA6BF814] = 1;
+    //     }
+    //     else if (auto15CE3F4F_val == 5)
+    //     {
+    //         lv_C2D36F8B[lv_CA6BF814] = 3;
+    //         lv_3090D3FC[lv_CA6BF814] = 4;
+    //     }
+    //     else if (auto15CE3F4F_val == 4)
+    //     {
+    //         lv_C2D36F8B[lv_CA6BF814] = 4;
+    //         lv_3090D3FC[lv_CA6BF814] = 8;
+    //     }
+    //     else if (auto15CE3F4F_val == 3)
+    //     {
+    //         lv_C2D36F8B[lv_CA6BF814] = 5;
+    //         lv_3090D3FC[lv_CA6BF814] = 13;
+    //     }
+    //     else
+    //     {
+    //     }
+    // }
+    //升级效果
+    PlayerCreateEffectUnit(ePlayer, "dbhy_00_05", eUnit);
+    // gv_63B35897[EventPlayer()] += lv_E315DE35;
+
+    //应该是更新计分板等级
+    // libNtve_gf_SetDialogItemText(gv_3050FA16[ePlayer][8], IntToText(eUnitLevel), PlayerGroupAll());
+
+    //e技能
+    // showMsg(1,IntToString(StringToInt(StringSub(UnitGetType(eUnit),7,8))));
+    TechTreeUpgradeAddLevel(ePlayer, "dbup_e_stat_title0", 1);
+    TechTreeUpgradeAddLevel(ePlayer,  gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(eUnit),7,8)))] , 1);
+
+    //dhup_01_1_0t_01 dbup_06_1_0t_06 dbup_07_1_0t dhup_07_1_0t_00
+    gf_72F2506B(ePlayer);
+
+    gf_139B0A84(ePlayer);
+
+    gf_D5AA5B4B(ePlayer);
+
+    gf_F1BEAFBB(ePlayer, -1, 0);
+
+    // gf_91088DA7(ePlayer);
+    showSkillUpgradeBtn(ePlayer,eUnit);
+
+    if (((UnitLevel(eUnit) == 5) || (UnitLevel(eUnit) == 9) || (UnitLevel(eUnit) == 13) || (UnitLevel(eUnit) == 17)))
+    {
+        TechTreeUpgradeAddLevel(ePlayer, "dhup_skillJ_t", 1);
+        TechTreeUpgradeAddLevel(ePlayer, "dhup_skillJ_t_00", 1);
+        gv_D0B36B8F[ePlayer][0] += 1;
+        gf_A4FDA2D7(ePlayer);
+        gf_FA0E566D(ePlayer);
+    }
+
+    gf_2AF0A3EE(ePlayer, eUnit, gv_5C4043F8.lv_23D09B56, c_unitPropLifePercent, gv_5C4043F8.lv_24D62004, c_unitPropLife, c_unitPropLifeMax);
+    gf_2AF0A3EE(ePlayer, eUnit, gv_5C4043F8.lv_472F835E, c_unitPropEnergyPercent, gv_5C4043F8.lv_D9B13017, c_unitPropEnergy, c_unitPropEnergyMax);
+    return true;
+}
+
+//gt_23443835
+//更新函数修改为重写过的
+bool gt_onUnitGainExp(bool testConds,bool runActions){
+    if (testConds)
+    {
+        if (!((UnitBehaviorCount(EventUnit(), "dbdo_ex3") == 0)))
+        {
+            return false;
+        }
+        if (!((UnitBehaviorCount(EventUnit(), "HallucinationTimedLife") == 0)))
+        {
+            return false;
+        }
+        if (!((gv_71C054E5[EventPlayer()] == EventUnit())))
+        {
+            return false;
+        }
+        if (!((gv_893C301B[EventPlayer()] < 24)))
+        {
+            return false;
+        }
+    }
+    if (!runActions)
+    {
+        return true;
+    }
+    // gv_CC0B9C16[EventPlayer()].lv_BDE71CAE += FixedToInt(EventUnitXPDelta());
+    updateExpBar(EventPlayer(),EventUnit());
+    return true;
+}
+
+void initOverWrite(){
+
+    if (gt_5E391F04 != null){
+        TriggerDestroy(gt_5E391F04);
+    }
+
+    gt_5E391F04 = TriggerCreate("gt_updateEnemyHUD");
+    TriggerEnable(gt_5E391F04, false);
+    TriggerAddEventUnitClick(gt_5E391F04, null, c_playerAny);
+
+    if (gt_D0366A97 != null){
+        TriggerDestroy(gt_D0366A97);
+    }
+
+    gt_D0366A97 = TriggerCreate("gt_onUnitGainLevel");
+    TriggerAddEventUnitGainLevel(gt_D0366A97, null);
+    
+    if (gt_23443835 != null){
+        TriggerDestroy(gt_23443835);
+    }
+
+    gt_23443835 = TriggerCreate("gt_onUnitGainExp");
+    TriggerAddEventUnitGainExperience(gt_23443835, null);
+}

@@ -85,10 +85,12 @@ unit createEmpHero(int player,int id,int side){
     // gf_ED9D4333(UnitLastCreated(), player);
 
     UnitBehaviorAddPlayer(UnitLastCreated(), "dbdo_ex", player, 1);
-    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie", player, 1);
-    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie4", player, 1);
-    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie42", player, 1);
-    UnitBehaviorAddPlayer(UnitLastCreated(), "nodie2", player, 1);
+
+    // gv_71C054E5[1] = UnitLastCreated(); 
+    // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie", player, 1);
+    // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie4", player, 1);
+    // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie42", player, 1);
+    // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie2", player, 1);
 
     UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
 
