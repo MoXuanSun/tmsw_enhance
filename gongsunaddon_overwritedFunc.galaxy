@@ -37,16 +37,16 @@ void updateExpBar(int player,unit inUnit)
 //显示英雄升级时可以升级的技能
 //原来的也是相对于玩家数组的，玩家拥有多个单位时不可使用
 void showSkillUpgradeBtn(int player,unit inUnit){
-
+ 
     
 
- 
     DialogControlSetEnabled(gv_99F9B79B[0], PlayerGroupSingle(player), true);
     DialogControlSetEnabled(gv_99F9B79B[1], PlayerGroupSingle(player), true);
     DialogControlSetEnabled(gv_99F9B79B[2], PlayerGroupSingle(player), true);
     DialogControlSetEnabled(gv_99F9B79B[3], PlayerGroupSingle(player), true);
-    DialogControlSetVisible(gv_81AD7FB9[lv_AD3D5FED], PlayerGroupSingle(player), true);
-    DialogControlSetVisible(gv_99F9B79B[lv_AD3D5FED], PlayerGroupSingle(player), true);
+    DialogControlSetVisible(gv_81AD7FB9[1], PlayerGroupSingle(player), true);
+    DialogControlSetVisible(gv_99F9B79B[1], PlayerGroupSingle(player), true);
+
 }
 
 void initGlobalValues(){

@@ -1,5 +1,3 @@
-
-
 //gt_5E391F04 覆盖
 //不显示，可以选择敌方英雄 此触发器弃用
 bool gt_updateEnemyHUD(bool testConds, bool runActions){
@@ -212,6 +210,266 @@ bool gt_onUnitGainExp(bool testConds,bool runActions){
     return true;
 }
 
+//覆盖gt_36068630
+//删除进入时的玩家句柄提示信息
+bool gt_gameInit(bool testConds,bool runActions){
+//设置游戏速度
+    GameSetSpeedValue(c_gameSpeedFaster);
+
+    //游戏速度锁定
+    GameSetSpeedLocked(true);
+
+    //停止播放音乐
+    SoundtrackStopCurrent(PlayerGroupAll(), c_soundtrackCategoryMusic, false);
+    
+    //替换单位行为
+    UnitBehaviorRemove(UnitFromId(1587265046), "UnknownBehavior2222", 1);
+    UnitBehaviorAdd(UnitFromId(1587265046), "dbdomisssssssssssss", UnitFromId(1587265046), 1);
+
+    //隐藏单位
+    libNtve_gf_ShowHideUnit(UnitFromId(1587265046), false);
+
+    //覆盖statusbar
+    UnitStatusBarClearOverride(UnitFromId(1587265046));
+
+    //时间
+    lib6AD83328_gv_curr_time_variable.lv_time_day = 9999;
+    lib6AD83328_gv_curr_time_variable.lv_time_hour = 9999;
+    lib6AD83328_gv_curr_time_variable.lv_time_min = 9999;
+    lib6AD83328_gv_curr_time_variable.lv_time_month = 9999;
+    lib6AD83328_gv_curr_time_variable.lv_time_sec = 9999;
+    lib6AD83328_gv_curr_time_variable.lv_time_year = 9999;
+    Wait(0.0625, c_timeGame);
+    curr_time_script();
+    Wait(0.0625, c_timeGame);
+
+    //平衡修改升级
+    TriggerExecute(gt_AE486128, true, false);
+
+    //黑色背景
+    gf_AEDFCCEC();
+    Wait(1.4, c_timeGame);
+
+    //隐藏所有uiFrame
+    gf_9E0FD04B();
+    
+    //gt_modeselect
+    TriggerExecute(gt_0531D4CC,false,false);
+
+    // 作者自定义的测试模式 开启需要注释上面的modeselect
+    // TriggerExecute(gt_CA44EF25, false, false);
+    return true;
+}
+
+//gt_0531D4CC
+//修改为不论多少玩家进入都会进入训练营模式
+bool gt_modeSelect(bool testConds,bool runActions){
+    // 激活ping panel
+    libLbty_gf_EnableDisablePingPanel(true, PlayerGroupAll());
+
+    //隐藏地图单位
+    libNtve_gf_ShowHideUnit(UnitFromId(608), false);
+    libNtve_gf_ShowHideUnit(UnitFromId(20), false);
+    libNtve_gf_ShowHideUnit(UnitFromId(1657007678), false);
+    libNtve_gf_ShowHideUnit(UnitFromId(168525155), false);
+
+    //1.从bank加载设置，如果bank不存在则为默认设置
+    //2.将玩家按照其语言设置存入不同的玩家组，以便本地化
+    TriggerExecute(gt_CC470061, false, true);
+
+    //设置光照
+    GameSetLighting("Char2", 1.4);
+
+    //创建颜色常量
+    TriggerExecute(gt_CA75246F, false, false);
+
+    // 原作者的某些黑名单
+    // TriggerExecute(gt_0C458B09, false, true);
+    
+    //按下8.将全局变量gv_12D739B9变为13,只有当全局变量不为13时才有效
+    TriggerEnable(gt_F16108BA, false);
+    
+    //1.开始随机播放bgm
+    //2.为观战者设置中立阵营
+    //3.展示进入单人模式的提示信息
+    //弃用
+    // TriggerExecute(gt_610A1DC5, false, true);
+
+    //初始化玩家设置
+    //根据玩家设置调整视角 -- gf_563C782F()
+    gf_654885B9();
+    
+    //欢迎信息
+    showMsg(1,"欢迎来到训练营！"+TextToString(TextWithColor(PlayerName(1),libNtve_gf_ConvertPlayerColorToColor(PlayerGetColorIndex(1,false))))+"大人~");
+
+    //?
+    gv_12D739B9 = 13;
+
+    //单人模式
+    gv_AC56085D = true;
+
+    //创建英雄 -- 修改为不创建 等待玩家手动创建
+    TriggerExecute(gt_D70D94F7,false,false);    
+    return true;
+}
+
+//gt_D70D94F7
+//加载一些游戏逻辑
+bool gt_loadGameLogic(bool testConds,bool runActions){
+    // 初始化字符常量
+    TriggerExecute(gt_A42AFADF, true, true);
+    TriggerExecute(gt_67FDA500, true, true);
+    TriggerExecute(gt_A21467A7, true, true);
+
+    // 触发于肉兔e技能对应效果，兴奋剂效果，hy_a_won效果(净化 对应行为Dragperfecspellb)
+    // testConds为true时除了爱丽丝以外会被该触发器忽略
+    // 通过EventPlayerEffectUsedUnitOwner获得施法者
+    // 传入gf_114177D8
+    // 转换为行为   
+    // gv_2E028B67数组找到的唯一赋值是爱丽丝开r时添加的，存入的应该是爱丽丝开r时对应的单位
+    // 这里直接简单粗暴，创建了一个数组，数组index对应玩家id，只要玩家玩爱丽丝开大，那么这个数组对应位置就会存入id
+    // gv_E7EDB9D8数组对应玩家英雄的单位，数据index对应玩家id
+    // 两个判断，都是判断单位是否存活，如果存活则为单位添加对应的behavior
+    TriggerEnable(gt_07C5E602, true);
+
+    //芙兰的e、r技能触发
+    TriggerEnable(gt_24D8433E, true);
+
+    //克劳连续WA
+    //绑定在attact指令触发
+    //触发器绑定在attack指令上，触发时会随机生成0~100的一个浮点数，
+    //这个随机数是用于判断是否暴击的(判断方法是这个数是否小于暴击百分比。。。简单粗暴)
+    // 然后判断攻击指令是否指向一个单位，如果指向一个单位继续判断，
+    // 如果attack的下一个指令是move且move指令移动的距离大于0.08且attack攻击的单位距离克劳小于3.4+攻击距离*0.18
+    // 给与一个效果，可以让克劳平a一次
+    // 如果开了r，变为4.15+攻击距离*0.18
+    TriggerEnable(gt_06F46C59, true);
+
+    //克劳连续wa -- move指令判断
+    TriggerEnable(gt_B8A29486, true);
+
+    //爱丽丝R技能效果
+    TriggerEnable(gt_D5601087, true);
+
+    //升级
+    // gf_EF9B8CC6(1);
+
+    //点击英雄切换ui，更新数据
+    TriggerEnable(gt_CF5EF86B, true);
+
+    //销毁选择、背景ui，展示游戏ui
+    //更新全部ui进入游戏循环
+    //gf_78614E23 随机开始播放音乐
+    TriggerExecute(gt_ED707C50,false,true);
+    return true;
+}
+
+//gt_ED707C50
+bool gt_loadTrainMode(bool testConds,bool runActions){
+    int playerid = 1;
+    //进入效果
+    SoundPlay(SoundLink("UI_ConsoleIn_Prot2", -1), PlayerGroupAll(), 100.0, 0.0);
+    DialogControlFadeTransparency(gv_D3F35143, PlayerGroupAll(), 2.0, 100.0);
+    Wait(1.5, c_timeReal);
+
+    //解除camera锁定
+    for (; playerid <= gv_2E028B67 ; playerid += 1){
+        if (gf_009A8454(playerid, 0))
+        {
+            CameraLockInput(playerid, false);
+        }
+    }
+
+    //设置可见
+    UISetFrameVisible(PlayerGroupAll(), c_syncFrameTypeInventoryPanel, true);
+    UISetFrameVisible(PlayerGroupAll(), c_syncFrameTypeInfoPanel, true);
+    UISetFrameVisible(PlayerGroupAll(), c_syncFrameTypeCommandPanel, true);
+    UISetFrameVisible(PlayerGroupAll(), c_syncFrameTypeMinimapPanel, true);
+    UISetFrameVisible(PlayerGroupAll(), c_syncFrameTypeResourcePanel, true);
+    UISetFrameVisible(PlayerGroupAll(), c_syncFrameTypeMenuBar, true);
+
+    //销毁dialog
+    DialogDestroyAll();
+   
+
+    //更新dialog
+    TriggerExecute(gt_85BAD3D9, false, false);
+
+    //随机播放音乐
+    gf_1C2570FD(1);
+
+
+    PlayerOptionOverride(1, "selectuncontrolable", "1");
+    VisRevealerCreate(1, RegionEntireMap());
+    VisRevealerEnable(VisRevealerLastCreated(), true);
+    PlayerSetAlliance(9,c_allianceIdControl,1,true);
+
+
+    ///----------------------------------
+    //创建小头像
+    TriggerExecute(gt_0315FDBE, false, true);
+    
+    //更新数据
+    gf_1A8469C6();
+
+    //timer、等级
+    // gf_9F5F6F17();
+    
+    ///---------------------gf_9F5F6F17----------------------
+    //等级
+    // libNtve_gf_SetDialogItemText(gv_5C4043F8.lv_75EF4F32, StringExternal("Param/Value/4D31123E"), PlayerGroupSingle(1));
+    //头像
+    libNtve_gf_SetDialogItemImage(gv_5C4043F8.lv_D11CB209, (("character\\interface\\face\\interface_face_" + IntToString(gv_131E8983[1]) + ".dds")), PlayerGroupSingle(1));
+
+    //mp、hp条和右侧数值栏显示初始化
+    gf_01345A24(1);
+    gf_3A83C136(1);
+
+    //非单人模式不显示
+    if ((gv_6CAD1DE1 == false && gv_AC56085D == false))
+    {
+        DialogSetVisible(gv_5C4043F8.lv_AF2E051A, PlayerGroupSingle(1), false);
+    }
+
+    
+    //重复调用 --gt_85BAD3D9
+    // TriggerExecute(gt_BEAA2115, false, false);
+    // TriggerExecute(gt_6A0C33ED, false, false);
+
+    //时间显示
+    TimerWindowCreate(gv_8930AB6D, StringExternal("Param/Value/D188FC06"), true, false);
+    gv_047B588D = TimerWindowLastCreated();
+    TimerWindowSetAnchor(gv_047B588D, c_anchorBottomLeft, 0, 0);
+    TimerWindowSetPosition(TimerWindowLastCreated(), 120, 920);
+    TimerWindowSetFixedHeight(TimerWindowLastCreated(), 80);
+    TimerWindowSetFormat(TimerWindowLastCreated(), StringToText("<mintotal/>:<sec2/>"));
+    TimerWindowSetStyle(TimerWindowLastCreated(), c_timerWindowStyleVerticalTitleTime, false);
+    TimerWindowShowBorder(TimerWindowLastCreated(), true);
+    DialogControlHookupStandard(c_triggerControlTypePanel, "UIContainer\\ConsoleUIContainer\\TriggerWindowPanel\\TimerWindowTemplate");
+    DialogControlSendAnimationEvent(DialogControlLastCreated(), PlayerGroupAll(), "HighlightStop");
+    TimerStart(gv_8930AB6D, 1.0, false, c_timeGame);
+
+    //重复调用 -----gt_85BAD3D9 
+    // TriggerExecute(gt_0315FDBE, false, false);
+
+    //全局dialog点击触发
+    TriggerEnable(gt_B5F15D4C, true);
+
+    ///-----------------------------------
+    //克劳技能
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_1q", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_2w", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_3e", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_4r", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_4r_00", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_1q", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_2w", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_3e", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r_00", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r", true);
+    return true;
+}
+
 void initOverWrite(){
 
     if (gt_5E391F04 != null){
@@ -221,6 +479,7 @@ void initOverWrite(){
     gt_5E391F04 = TriggerCreate("gt_updateEnemyHUD");
     TriggerEnable(gt_5E391F04, false);
     TriggerAddEventUnitClick(gt_5E391F04, null, c_playerAny);
+
 
     if (gt_D0366A97 != null){
         TriggerDestroy(gt_D0366A97);
@@ -235,4 +494,27 @@ void initOverWrite(){
 
     gt_23443835 = TriggerCreate("gt_onUnitGainExp");
     TriggerAddEventUnitGainExperience(gt_23443835, null);
+
+    TriggerEnable(gt_36068630,false);
+    //原图的mapinit
+
+    TriggerAddEventMapInit(TriggerCreate("gt_gameInit"));
+
+    if (gt_0531D4CC != null){
+        TriggerDestroy(gt_0531D4CC);
+    }
+
+    gt_0531D4CC = TriggerCreate("gt_modeSelect");
+
+    if (gt_D70D94F7 != null){
+        TriggerDestroy(gt_D70D94F7);
+    }
+
+    gt_D70D94F7 = TriggerCreate("gt_loadGameLogic");
+
+    if (gt_ED707C50 != null){
+        TriggerDestroy(gt_ED707C50);
+    }
+
+    gt_ED707C50 = TriggerCreate("gt_loadTrainMode");
 }
