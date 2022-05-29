@@ -12,6 +12,9 @@ bool gt_updateEnemyHUD(bool testConds, bool runActions){
 
     //测试模式下不显示
     if (gv_AC56085D){
+        gv_131E8983[ePlayer] = StringToInt(StringSub(UnitGetType(EventUnit()),7,8));
+
+        gv_71C054E5[ePlayer] = EventUnit();
         return true;
     }
 
@@ -162,8 +165,8 @@ bool gt_onUnitGainLevel(bool testConds, bool runActions){
 
     gf_F1BEAFBB(ePlayer, -1, 0);
 
-    // gf_91088DA7(ePlayer);
-    showSkillUpgradeBtn(ePlayer,eUnit);
+    gf_91088DA7(ePlayer);
+    // showSkillUpgradeBtn(ePlayer,eUnit);
 
     if (((UnitLevel(eUnit) == 5) || (UnitLevel(eUnit) == 9) || (UnitLevel(eUnit) == 13) || (UnitLevel(eUnit) == 17)))
     {
@@ -467,6 +470,8 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     UnitAbilityShow(UnitFromId(20), "dbnu19_1_3e", true);
     UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r_00", true);
     UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r", true);
+
+    showMsg(1,"加载完毕~!");
     return true;
 }
 

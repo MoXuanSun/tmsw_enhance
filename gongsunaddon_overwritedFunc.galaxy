@@ -1,4 +1,3 @@
-
 //gf_DE60CDEF(int lp_5962A3E0)
 //等级显示与升级所需经验进度条更新函数
 //覆盖为根据单位经验值和等级更新，
@@ -36,21 +35,9 @@ void updateExpBar(int player,unit inUnit)
 //gf_91088DA7
 //显示英雄升级时可以升级的技能
 //原来的也是相对于玩家数组的，玩家拥有多个单位时不可使用
+//1.判断英雄当前等级可以加的技能，比如1级可以加qw，8级可以加qwe
+//2.本函数必须在选中单位时在调用
 void showSkillUpgradeBtn(int player,unit inUnit){
-    
-    
-
-
-    DialogControlSetEnabled(gv_99F9B79B[0], PlayerGroupSingle(player), true);
-    DialogControlSetEnabled(gv_99F9B79B[1], PlayerGroupSingle(player), true);
-    DialogControlSetEnabled(gv_99F9B79B[2], PlayerGroupSingle(player), true);
-    DialogControlSetEnabled(gv_99F9B79B[3], PlayerGroupSingle(player), true);
-    DialogControlSetVisible(gv_81AD7FB9[1], PlayerGroupSingle(player), true);
-    DialogControlSetVisible(gv_99F9B79B[1], PlayerGroupSingle(player), true);
-
-
-
-
     DialogControlSetEnabled(gv_99F9B79B[0], PlayerGroupSingle(player), true);
     DialogControlSetEnabled(gv_99F9B79B[1], PlayerGroupSingle(player), true);
     DialogControlSetEnabled(gv_99F9B79B[2], PlayerGroupSingle(player), true);
