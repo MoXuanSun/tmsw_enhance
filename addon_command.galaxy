@@ -200,7 +200,34 @@ void cmd_clearUnit(int player){
     }
     UnitGroupLoopEnd();
 }
-//
+
+
+//allowdot ture - 不转换为整数
+//allowdot flase - 转换为整数进行比较 
+//测试结果显示随机数重复的速度很快(allowdot为true时)
+void testRandomFixedCycle(int player,int times,bool allowDot){
+    int i;
+
+    for ( ; i < times ; i+=1){
+        gv_nums[i] = RandomFixed(0.0,100.0);
+
+
+        if (i != 0 && ((allowDot && FixedToInt(gv_nums[i-1]) == FixedToInt(gv_nums[i])) || gv_nums[i-1] == gv_nums[i])){
+            showMsg(1,"发生重复！");
+            showMsg(1,"重复于第"+IntToString(i+1)+"次生成，重复的数为"+FixedToString(gv_nums[i],2));
+            return;
+        }
+    }
+    
+    
+}
+
+void cmd_testRandoFixedCycle(int player,string p1,string p2){
+ 
+    testRandomFixedCycle(player,StringToInt(p1),StringToBool(p2));
+  
+}
+
 bool tg_addons_commands_init(bool testConds, bool runActions){
     string msg = EventChatMessage(false);
     string cmd = StringWord(msg,1);
@@ -229,6 +256,9 @@ bool tg_addons_commands_init(bool testConds, bool runActions){
     }
     else if (cmd == "-clearUnit"){
         cmd_clearUnit(player);
+    }
+    else if (cmd == "-testRandomFixedCycle"){
+        cmd_testRandoFixedCycle(player,param,param2);
     }
     return true;
 }
