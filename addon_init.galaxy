@@ -1,6 +1,6 @@
 void initaddons(){
 
-    initOverWrite();
+    initOverwriteTrigger();
     initGlobalValues();
     createDialogs();
     TriggerAddEventChatMessage(TriggerCreate("tg_addons_commands_init"), c_playerAny, "", true);

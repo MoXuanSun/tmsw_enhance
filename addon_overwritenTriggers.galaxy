@@ -1,3 +1,68 @@
+//GongSunink 2022
+//mapper table
+//gt_5E391F04 -> gt_updateEnemyHUD (disabled) unitClick
+//gt_D0366A97 -> gt_onUnitGainLevel unitGainLevel
+//gt_23443835 -> gt_onUnitGainExp UnitGainExperience
+//gt_36068630 -> gt_gameInit MapInit
+//gt_0531D4CC -> gt_modeSelect 
+//gt_D70D94F7 -> gt_loadSpSkillTrigger
+//gt_ED707C50 -> gt_loadTrainMode
+//gt_CF5EF86B -> gt_dynamicSwitchUnitData unitClick
+
+//覆盖gt_CF5EF86B
+//动态切换全局变量
+//gv_131E8983 player : heroid
+//gv_71C054E5 player : herounit
+//gv_893C301B player : level
+//gv_5DDEB9BD player-(hero_skillindex) : 1/0 
+//gv_63B35897 player : upgrade-points
+//gv_D0B36B8F player-(hero-skillindex+1) : level
+//gv_203166CD player-(hero-skillindex+1) : last-upgrade-player-level
+//gv_9CB902A4 player-propertyid : value
+//gv_26FF03B5 player ：last-upgrade-skill-index
+bool gt_dynamicSwitchGvData(bool testConds, bool runActions){
+
+    int ePlayer = EventPlayer();
+    unit eUnit = EventUnit();
+    int eUnitLevel = UnitLevel(eUnit);
+
+    int i;
+
+    //取消选择
+    UnitSelect(gv_71C054E5[ePlayer], ePlayer, false);
+    
+    // UnitBehaviorRemove(EventUnit(), "nodie2", 1);
+    
+    // Wait(0.0625, c_timeGame);
+
+    //选择新单位
+    UnitSelect(eUnit, ePlayer, true);
+    
+    // UnitBehaviorAddPlayer(EventUnit(), "nodie2", EventPlayer(), 1);
+
+    //提示点击
+    UIAlertUnit("MyClickLocations", ePlayer, StringToText(""), null, eUnit);
+
+    //可改为dataTable存储所有heroTypeName对应的id
+    gv_131E8983[ePlayer] = StringToInt(StringSub(UnitGetType(eUnit),7,8));
+
+    gv_71C054E5[ePlayer] = eUnit;
+    
+    gv_893C301B[ePlayer] = eUnitLevel;
+
+    for (i = 0 ; i < 4 ; i += 1){
+        gv_5DDEB9BD[ePlayer][i] = getHeroSkillLearnStat(ePlayer,eUnit,i);   
+    }
+
+    gv_63B35897[ePlayer] = getPlayerUpgradePoint(ePlayer);
+
+    
+
+    
+    // DataTableInstanceGetInt(gv_dataTableDynamicData,getPlayerHeroLevelKey(ePlayer,eUnit));
+    return true;
+}
+
 //gt_5E391F04 覆盖
 //不显示，可以选择敌方英雄 此触发器弃用
 bool gt_updateEnemyHUD(bool testConds, bool runActions){
@@ -10,11 +75,9 @@ bool gt_updateEnemyHUD(bool testConds, bool runActions){
     int propCount = 7;
     //数值个数
 
-    //测试模式下不显示
+    //训练营模式下不显示
     if (gv_AC56085D){
-        gv_131E8983[ePlayer] = StringToInt(StringSub(UnitGetType(EventUnit()),7,8));
-
-        gv_71C054E5[ePlayer] = EventUnit();
+        
         return true;
     }
 
@@ -216,7 +279,7 @@ bool gt_onUnitGainExp(bool testConds,bool runActions){
 //覆盖gt_36068630
 //删除进入时的玩家句柄提示信息
 bool gt_gameInit(bool testConds,bool runActions){
-//设置游戏速度
+    //设置游戏速度
     GameSetSpeedValue(c_gameSpeedFaster);
 
     //游戏速度锁定
@@ -251,13 +314,21 @@ bool gt_gameInit(bool testConds,bool runActions){
 
     //黑色背景
     gf_AEDFCCEC();
-    Wait(1.4, c_timeGame);
+    // Wait(1.4, c_timeGame);
 
     //隐藏所有uiFrame
     gf_9E0FD04B();
     
     //gt_modeselect
-    TriggerExecute(gt_0531D4CC,false,false);
+    TriggerExecute(gt_0531D4CC,false,true);
+
+    //创建英雄 -- 修改为不创建 等待玩家手动创建
+    TriggerExecute(gt_D70D94F7,false,true);    
+
+    //销毁选择、背景ui，展示游戏ui
+    //更新全部ui进入游戏循环
+    //gf_78614E23 随机开始播放音乐
+    TriggerExecute(gt_ED707C50,false,true);
 
     // 作者自定义的测试模式 开启需要注释上面的modeselect
     // TriggerExecute(gt_CA44EF25, false, false);
@@ -311,14 +382,13 @@ bool gt_modeSelect(bool testConds,bool runActions){
     //单人模式
     gv_AC56085D = true;
 
-    //创建英雄 -- 修改为不创建 等待玩家手动创建
-    TriggerExecute(gt_D70D94F7,false,false);    
+    
     return true;
 }
 
 //gt_D70D94F7
-//加载一些游戏逻辑
-bool gt_loadGameLogic(bool testConds,bool runActions){
+//启用一些特殊技能的触发器
+bool gt_loadSpSkillTrigger(bool testConds,bool runActions){
     // 初始化字符常量
     TriggerExecute(gt_A42AFADF, true, true);
     TriggerExecute(gt_67FDA500, true, true);
@@ -360,10 +430,7 @@ bool gt_loadGameLogic(bool testConds,bool runActions){
     //点击英雄切换ui，更新数据
     TriggerEnable(gt_CF5EF86B, true);
 
-    //销毁选择、背景ui，展示游戏ui
-    //更新全部ui进入游戏循环
-    //gf_78614E23 随机开始播放音乐
-    TriggerExecute(gt_ED707C50,false,true);
+ 
     return true;
 }
 
@@ -371,9 +438,9 @@ bool gt_loadGameLogic(bool testConds,bool runActions){
 bool gt_loadTrainMode(bool testConds,bool runActions){
     int playerid = 1;
     //进入效果
-    SoundPlay(SoundLink("UI_ConsoleIn_Prot2", -1), PlayerGroupAll(), 100.0, 0.0);
+    
     DialogControlFadeTransparency(gv_D3F35143, PlayerGroupAll(), 2.0, 100.0);
-    Wait(1.5, c_timeReal);
+    SoundPlay(SoundLink("UI_ConsoleIn_Prot2", -1), PlayerGroupAll(), 100.0, 0.0);
 
     //解除camera锁定
     for (; playerid <= gv_2E028B67 ; playerid += 1){
@@ -394,19 +461,19 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     //销毁dialog
     DialogDestroyAll();
    
-
     //更新dialog
     TriggerExecute(gt_85BAD3D9, false, false);
 
     //随机播放音乐
     gf_1C2570FD(1);
 
-
+    //敌方可选
     PlayerOptionOverride(1, "selectuncontrolable", "1");
+    //全图视野
     VisRevealerCreate(1, RegionEntireMap());
     VisRevealerEnable(VisRevealerLastCreated(), true);
+    //共享控制
     PlayerSetAlliance(9,c_allianceIdControl,1,true);
-
 
     ///----------------------------------
     //创建小头像
@@ -475,7 +542,12 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     return true;
 }
 
-void initOverWrite(){
+void initDataTableInstance(){
+    DataTableInstanceCreate();
+    gv_dataTableDynamicData = DataTableInstanceLastCreated();
+}
+
+void initOverwriteTrigger(){
 
     if (gt_5E391F04 != null){
         TriggerDestroy(gt_5E391F04);
@@ -515,11 +587,22 @@ void initOverWrite(){
         TriggerDestroy(gt_D70D94F7);
     }
 
-    gt_D70D94F7 = TriggerCreate("gt_loadGameLogic");
+    gt_D70D94F7 = TriggerCreate("gt_loadSpSkillTrigger");
 
     if (gt_ED707C50 != null){
         TriggerDestroy(gt_ED707C50);
     }
 
     gt_ED707C50 = TriggerCreate("gt_loadTrainMode");
+
+
+    // if (gt_CF5EF86B != null){
+    //     TriggerDestroy(gt_CF5EF86B);
+    // }
+
+    // gt_CF5EF86B = TriggerCreate("gt_dynamicSwitchGvData");
+    // TriggerEnable(gt_CF5EF86B, false);
+    // TriggerAddEventUnitClick(gt_CF5EF86B, null, c_playerAny);
+
+    initDataTableInstance();
 }

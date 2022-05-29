@@ -91,6 +91,7 @@ unit createEmpHero(int player,int id,int side){
     // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie4", player, 1);
     // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie42", player, 1);
     // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie2", player, 1);
+    showMsg(1,IntToString(UnitGetTag(UnitLastCreated())));
 
     UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
 

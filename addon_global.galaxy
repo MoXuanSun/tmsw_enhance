@@ -3,6 +3,12 @@ string[10] gv_heroEstatStr;
 
 fixed[1000] gv_nums;
 
+int gv_dataTableDynamicData;
+
+unitgroup unitCreated;
+
 void updateExpBar(int player,unit inUnit);
 
 void showSkillUpgradeBtn(int player,unit inUnit);
+
+string getPlayerHeroLevelKey(int inPlayer,unit inUnit);

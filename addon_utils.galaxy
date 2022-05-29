@@ -1,0 +1,14 @@
+string getUnitLevel(unit inUnit){
+
+    // int amont = DataTableInstanceGetInt(gv_dataTableDynamicData,"unitCreateAmont");
+
+    // UnitGroup
+
+    // return IntToString(inPlayer)+"_"
+
+
+    //unit tag
+    return "";
+  
+}
+
