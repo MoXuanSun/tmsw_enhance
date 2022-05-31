@@ -1,4 +1,269 @@
 //GongSunink 2022
+//测试模式下，点击单位动态切换全局变量
+//gv_131E8983 player : heroid
+//gv_71C054E5 player : herounit
+//gv_893C301B player : level
+//gv_5DDEB9BD player-(hero_skillindex) : 1/0 
+//gv_63B35897 player : upgrade-points
+//gv_D0B36B8F player-(hero-skillindex+1) : level
+//gv_203166CD player-(hero-skillindex) : last-upgrade-player-level
+//gv_9CB902A4 player-propertyid : value
+//gv_26FF03B5 player ：last-upgrade-skill-index
+void saveDataForUnitLastSelected(){
+    int ePlayer = EventPlayer();
+    unit eUnit = EventUnit();
+    int eUnitLevel = UnitLevel(eUnit);
+    unit lastUnit = gv_71C054E5[ePlayer];
+
+    int i;
+
+    for (i = 0 ; i < 4 ; i += 1){
+        setHeroSkillLearnStat(lastUnit,i,gv_5DDEB9BD[ePlayer][i]);
+    }
+
+    setPlayerUpgradePoints(ePlayer,gv_63B35897[ePlayer]);
+
+    for (i = 0 ; i < 4 ; i += 1){
+        setHeroSkillLevel(lastUnit,i + 1,gv_D0B36B8F[ePlayer][i + 1]);
+    }
+
+    for (i = 0 ; i < 4 ; i += 1){
+        setHeroSkillLastUpgradeLevel(lastUnit,i + 1,gv_203166CD[ePlayer][i]);
+    }
+
+    for (i = 0 ; i < 15 ; i += 1){
+        setHeroPropert(lastUnit,i,gv_9CB902A4[ePlayer][i]);
+    }
+
+    setHerolastUpgradeSkillIndex(eUnit,gv_26FF03B5[ePlayer]);    
+}
+
+void updateDataForCurrSelectingUnit(){
+    int ePlayer = EventPlayer();
+    unit eUnit = EventUnit();
+    int eUnitLevel = UnitLevel(eUnit);
+    unit lastUnit = gv_71C054E5[ePlayer];
+
+    int i;
+
+    //可改为dataTable存储所有heroTypeName对应的id
+    gv_131E8983[ePlayer] = StringToInt(StringSub(UnitGetType(eUnit),7,8));
+
+    gv_71C054E5[ePlayer] = eUnit;
+      
+    gv_893C301B[ePlayer] = eUnitLevel;
+  
+    for (i = 0 ; i < 4 ; i += 1){
+        gv_5DDEB9BD[ePlayer][i] = getHeroSkillLearnStat(eUnit,i);   
+    }
+  
+    gv_63B35897[ePlayer] = getPlayerUpgradePoints(ePlayer);
+  
+      
+    for (i = 0 ; i < 4 ; i += 1){
+        gv_D0B36B8F[ePlayer][i + 1] = getHeroSkillLevel(eUnit,i);
+    }
+  
+    for (i = 0 ; i < 4 ; i += 1){
+        gv_203166CD[ePlayer][i] = getHeroSkillLastUpgradeLevel(eUnit,i);
+    }
+  
+    for (i = 0 ; i < 15 ; i += 1){
+        gv_9CB902A4[ePlayer][i] = getHeroPropert(lastUnit,i);
+    }
+  
+    gv_26FF03B5[ePlayer] = getHerolastUpgradeSkillIndex(eUnit);
+}
+
+void dynamicSwitchData(){
+    saveDataForUnitLastSelected();
+    updateDataForCurrSelectingUnit();
+}
+//注册一个科技到动态切换列表中
+void registerDynamicTech(string inTech){
+    setTechRegistered(inTech);
+}
+
+//1.保存原有科技等级
+//2.更新现有科技等级
+void dynamicSwitchTechTree(){
+    int ePlayer = EventPlayer();
+    unit eUnit = EventUnit();
+    int eUnitLevel = UnitLevel(eUnit);
+    unit lastUnit = gv_71C054E5[ePlayer];
+
+    string currTech;
+    int i;
+
+    for (i = 0 ; i < getTechRegisteredIndex() ; i += 1){
+        currTech = getTechRegistered(i);
+        setTechRegisteredLevel(eUnit,currTech,TechTreeUpgradeCount(ePlayer,currTech,c_techCountCompleteOnly));
+    }
+
+    for (i = 0 ; i < getTechRegisteredIndex() ; i += 1){
+        currTech = getTechRegistered(i);
+        libNtve_gf_SetUpgradeLevelForPlayer(1,currTech,getTechRegisteredLevel(eUnit,currTech));
+    }
+}
+
+void setTechNeedDynamicSwitch(){
+
+    //gt_D0366A97
+    registerDynamicTech("dbup_e_stat_title0");
+    //TechTreeUpgradeAddLevel(EventPlayer(), gv_93D2AA8F[EventPlayer()], 1) gt_AED8B60E
+    registerDynamicTech("dbup_e_stat_str_01");
+    registerDynamicTech("dbup_e_stat_str_06");
+    registerDynamicTech("dbup_e_stat_str_11");
+    registerDynamicTech("dbup_e_stat_str_16");
+    registerDynamicTech("dbup_e_stat_str_21");
+    registerDynamicTech("dbup_e_stat_str_26");
+    registerDynamicTech("dbup_e_stat_str_31");
+    registerDynamicTech("dbup_e_stat_str_36");
+    registerDynamicTech("dbup_e_stat_str_41");
+    registerDynamicTech("dbup_e_stat_str_46");
+
+    //gf_72F2506B
+    registerDynamicTech("dhup_01_1_0t_01");
+    registerDynamicTech("dbup_06_1_0t_06");
+    registerDynamicTech("dbup_07_1_0t");
+    registerDynamicTech("dhup_07_1_0t_00");
+
+    //gf_139B0A84 
+    registerDynamicTech("dbup_tuc_1_07");
+    registerDynamicTech("dbup_tuc_1_07_00");
+    registerDynamicTech("dbup_roon_002222");
+    registerDynamicTech("dbup_roon_0022");
+    registerDynamicTech("dbup_tucz_002");
+    registerDynamicTech("dbup_tuc_1_07_create22");
+    registerDynamicTech("dbup_tuc_1_07_00_cre22");
+    registerDynamicTech("dbup_tuc_1_07_create22");
+    registerDynamicTech("dbup_tuc_1_07_00_cre22");
+    registerDynamicTech("dbup_new_roon_0_00_level");
+    registerDynamicTech("dbup_new_roon_0_01_level");
+    registerDynamicTech("dbup_new_roon_0_03_level");
+    registerDynamicTech("dbup_new_roon_0_15_level");
+    registerDynamicTech("dbup_new_roon_0_16_level");
+    registerDynamicTech("dbup_new_roon_0_17_level");
+    registerDynamicTech("dbup_new_roon_1_04_leveltt4");
+    registerDynamicTech("dbup_new_roon_1_01_level");
+    registerDynamicTech("dbup_new_roon_1_03_level");
+    registerDynamicTech("dbup_new_roon_1_15_level");
+    registerDynamicTech("dbup_new_roon_1_16_level");
+    registerDynamicTech("dbup_new_roon_2_03_level");
+    registerDynamicTech("dbup_new_roon_2_15_level");
+    registerDynamicTech("dbup_new_roon_2_16_level");
+    registerDynamicTech("dbup_new_roon_3_00_level");
+
+    
+    //gt_D16F0461
+    registerDynamicTech("dbup_g_stat_str_012");
+    registerDynamicTech("dbup_g_stat_str_06");
+    registerDynamicTech("dbup_g_stat_str_11");
+    registerDynamicTech("dbup_g_stat_str_16");
+    registerDynamicTech("dbup_g_stat_str_21");
+    registerDynamicTech("dbup_g_stat_str_26");
+    registerDynamicTech("dbup_g_stat_str_31");
+    registerDynamicTech("dbup_g_stat_str_36");
+    registerDynamicTech("dbup_g_stat_str_41");
+    registerDynamicTech("dbup_g_stat_str_46");
+    registerDynamicTech("dbup_g_stat_int_01");
+    registerDynamicTech("dbup_g_stat_int_06");
+    registerDynamicTech("dbup_g_stat_int_11");
+    registerDynamicTech("dbup_g_stat_int_16");
+    registerDynamicTech("dbup_g_stat_int_21");
+    registerDynamicTech("dbup_g_stat_int_26");
+    registerDynamicTech("dbup_g_stat_int_31");
+    registerDynamicTech("dbup_g_stat_int_36");
+    registerDynamicTech("dbup_g_stat_int_41");
+    registerDynamicTech("dbup_g_stat_int_46");
+    registerDynamicTech("dbup_f_stat_str_01");
+    registerDynamicTech("dbup_f_stat_str_06");
+    registerDynamicTech("dbup_f_stat_str_11");
+    registerDynamicTech("dbup_f_stat_str_16");
+    registerDynamicTech("dbup_f_stat_str_21");
+    registerDynamicTech("dbup_f_stat_str_26");
+    registerDynamicTech("dbup_f_stat_str_31");
+    registerDynamicTech("dbup_f_stat_str_36");
+    registerDynamicTech("dbup_f_stat_str_41");
+    registerDynamicTech("dbup_f_stat_str_46");
+    registerDynamicTech("dbup_f_stat_int_01");
+    registerDynamicTech("dbup_f_stat_int_06");
+    registerDynamicTech("dbup_f_stat_int_11");
+    registerDynamicTech("dbup_f_stat_int_16");
+    registerDynamicTech("dbup_f_stat_int_21");
+    registerDynamicTech("dbup_f_stat_int_26");
+    registerDynamicTech("dbup_f_stat_int_31");
+    registerDynamicTech("dbup_f_stat_int_36");
+    registerDynamicTech("dbup_f_stat_int_41");
+    registerDynamicTech("dbup_f_stat_int_46");
+    registerDynamicTech("dbup_f_stat_int_5");
+    registerDynamicTech("dbup_f_stat_int_062");
+    registerDynamicTech("dbup_f_stat_int_112");
+    registerDynamicTech("dbup_f_stat_int_162");
+    registerDynamicTech("dbup_f_stat_int_212");
+    registerDynamicTech("dbup_f_stat_int_262");
+    registerDynamicTech("dbup_f_stat_int_312");
+    registerDynamicTech("dbup_f_stat_int_362");
+    registerDynamicTech("dbup_f_stat_int_412");
+    registerDynamicTech("dbup_f_stat_int_462");
+    registerDynamicTech("dbup_f_stat_str_012");
+    registerDynamicTech("dbup_f_stat_str_062");
+    registerDynamicTech("dbup_f_stat_str_112");
+    registerDynamicTech("dbup_f_stat_str_162");
+    registerDynamicTech("dbup_f_stat_str_212");
+    registerDynamicTech("dbup_f_stat_str_262");
+    registerDynamicTech("dbup_f_stat_str_312");
+    registerDynamicTech("dbup_f_stat_str_362");
+    registerDynamicTech("dbup_f_stat_str_412");
+    registerDynamicTech("dbup_f_stat_str_462");
+    registerDynamicTech("dbup_f_stat_int_52");
+    registerDynamicTech("dbup_f_stat_int_0622");
+    registerDynamicTech("dbup_f_stat_int_1122");
+    registerDynamicTech("dbup_f_stat_int_1622");
+    registerDynamicTech("dbup_f_stat_int_2122");
+    registerDynamicTech("dbup_f_stat_int_2622");
+    registerDynamicTech("dbup_f_stat_int_3122");
+    registerDynamicTech("dbup_f_stat_int_3622");
+    registerDynamicTech("dbup_f_stat_int_4122");
+    registerDynamicTech("dbup_f_stat_int_4622");
+
+    //gf_19E65221
+    registerDynamicTech("dbup_ablv_q_plus");
+    registerDynamicTech("dbup_ablv_w_plus");
+    registerDynamicTech("dbup_ablv_e_plus");
+    registerDynamicTech("dbup_ablv_r_plus");
+    registerDynamicTech("dbup_ablv_q_plus_2");
+    registerDynamicTech("dbup_ablv_w_plus_2");
+    registerDynamicTech("dbup_ablv_e_plus_2");
+    registerDynamicTech("dbup_ablv_r_plus_2");
+    registerDynamicTech("dhup_geum_q");
+    registerDynamicTech("dhup_geum_w");
+    registerDynamicTech("dhup_geum_e");
+    registerDynamicTech("dhup_geum_r");
+    registerDynamicTech("dhup_geum_q");
+    registerDynamicTech("dhup_geum_w2");
+    registerDynamicTech("dhup_geum_e2");
+    registerDynamicTech("dhup_geum_r2");
+    registerDynamicTech("dhup_geum_q");
+    registerDynamicTech("dhup_geum_w");
+    registerDynamicTech("dhup_geum_e22");
+    registerDynamicTech("dhup_geum_r22");
+    registerDynamicTech("dhup_geum_q");
+    registerDynamicTech("dhup_geum_w2");
+    registerDynamicTech("dhup_geum_e22");
+    registerDynamicTech("dhup_geum_r222");
+    registerDynamicTech("dhup_skillJ_q");
+    registerDynamicTech("dhup_skillJ_q_00");
+    registerDynamicTech("dhup_skillJ_w");
+    registerDynamicTech("dhup_skillJ_w_00");
+    registerDynamicTech("dhup_skillJ_e");
+    registerDynamicTech("dhup_skillJ_e_00");
+    registerDynamicTech("dhup_skillJ_r");
+    registerDynamicTech("dhup_skillJ_r_00");
+
+
+}
+
 void initGlobalValues(){
     gv_heroEstatStr[0] = "dbup_e_stat_str_01";
     gv_heroEstatStr[1] = "dbup_e_stat_str_06";
@@ -10,120 +275,4 @@ void initGlobalValues(){
     gv_heroEstatStr[7] = "dbup_e_stat_str_36";
     gv_heroEstatStr[8] = "dbup_e_stat_str_41";
     gv_heroEstatStr[9] = "dbup_e_stat_str_46";
-    
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (2 - lv_E0BD8C4F);// 1
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (2 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);//0
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);//0
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);//0
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (2 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);//0
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (2 - lv_E0BD8C4F);//1
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (2 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (2 - lv_E0BD8C4F);//1
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (2 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);//0
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (2 - lv_E0BD8C4F);//1
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (2 - lv_E0BD8C4F);//1
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (2 - lv_E0BD8C4F);//1
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (2 - lv_E0BD8C4F);//1
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);//0
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);// 0
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);// 1
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (3 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (2 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (2 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
-    lv_B5D17981[lv_A68463E9][lv_67D9168A] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_87788EF3] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_63EE76F2] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_62991A4F] = (1 - lv_E0BD8C4F);
-    lv_B5D17981[lv_A68463E9][lv_1856DF39] = (1 - lv_E0BD8C4F);
-    lv_A68463E9 += 1;
 }

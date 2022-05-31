@@ -3,6 +3,8 @@ int gv_enemy = 9;
 int gv_ally = 1;
 unitgroup summonedUnit;
 
+timer time = TimerCreate();
+
 unit creatHero(int player,int id){
     unit heroUnit;
 
@@ -73,6 +75,7 @@ unit creatHero(int player,int id){
 unit createEmpHero(int player,int id,int side){
     int i;
     string test;
+  
     if (side == 1){
         //ally
         libNtve_gf_CreateUnitsWithDefaultFacing(1,gv_367C7760[id],0,gv_ally, PointFromName("test"));          
@@ -119,16 +122,27 @@ unit createEmpHero(int player,int id,int side){
     // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_4r", true);
     // UnitAbilityChangeLevel(UnitLastCreated(),"dbnu18_1_0q",3);
 
+    TechTreeUpgradeAddLevel(EventPlayer(), "dbup_e_stat_title0", 1);
+    TechTreeUpgradeAddLevel(EventPlayer(), gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(UnitLastCreated()),7,8)))], 1);
+
     TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus",1);
     TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus_2",1);
     
-    TechTreeUpgradeAddLevel(1,"dhup_skillJ_q",1);
-    TechTreeUpgradeAddLevel(1,"dhup_skillJ_q_00",1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+
+    // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q",1);
+    // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q_00",1);
 
     //设置为负数可以降低科技等级、、、真不知道暴雪怎么想的 为什么不分开成两个方法 debug way: 问了一圈 忙了一下午 还不如在文档里面搜索这个函数看看，。。。
     UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
     UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
-  
+    
+    showMsg(1,IntToString(TechTreeUpgradeCount(1,"dbup_ablv_q_plus",c_techCountCompleteOnly)));
+
+    TimerStart(time,5.0,false,c_timeGame);
 
     // UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
 
@@ -143,7 +157,14 @@ unit upgradeHero(){
 //生成一个英雄 p1 英雄id
 void cmd_summon(int player,string p1,string p2){
     
-    createEmpHero(player,StringToInt(p1),StringToInt(p2));
+    createEmpHero(player,StringToInt(p1),StringToInt(p2));    
+    
+    TriggerAddEventTimer(TriggerCreate("onTimerCallBack"),time);
+}
+
+bool onTimerCallBack(bool testConds,bool runActions){
+    libNtve_gf_SetUpgradeLevelForPlayer(1, "dhup_geum_q", 0);
+    return true;
 }
 
 void cmd_effect(int player,string p1,string p2){

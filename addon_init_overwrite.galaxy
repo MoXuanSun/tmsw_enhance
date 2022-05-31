@@ -1,0 +1,67 @@
+//GongSunink 2022
+//mapper table
+//gt_5E391F04 -> gt_updateEnemyHUD (disabled) unitClick
+//gt_D0366A97 -> gt_onUnitGainLevel unitGainLevel
+//gt_23443835 -> gt_onUnitGainExp UnitGainExperience
+//gt_36068630 -> gt_gameInit MapInit
+//gt_0531D4CC -> gt_modeSelect 
+//gt_D70D94F7 -> gt_loadSpSkillTrigger
+//gt_ED707C50 -> gt_loadTrainMode
+//gt_CF5EF86B -> gt_dynamicSwitchUnitData unitClick
+void initOverwriteTrigger(){
+
+    if (gt_5E391F04 != null){
+        TriggerDestroy(gt_5E391F04);
+    }
+
+    gt_5E391F04 = TriggerCreate("gt_updateEnemyHUD");
+    TriggerEnable(gt_5E391F04, false);
+    TriggerAddEventUnitClick(gt_5E391F04, null, c_playerAny);
+
+
+    if (gt_D0366A97 != null){
+        TriggerDestroy(gt_D0366A97);
+    }
+
+    gt_D0366A97 = TriggerCreate("gt_onUnitGainLevel");
+    TriggerAddEventUnitGainLevel(gt_D0366A97, null);
+    
+    if (gt_23443835 != null){
+        TriggerDestroy(gt_23443835);
+    }
+
+    gt_23443835 = TriggerCreate("gt_onUnitGainExp");
+    TriggerAddEventUnitGainExperience(gt_23443835, null);
+
+    TriggerEnable(gt_36068630,false);
+    //原图的mapinit
+
+    TriggerAddEventMapInit(TriggerCreate("gt_gameInit"));
+
+    if (gt_0531D4CC != null){
+        TriggerDestroy(gt_0531D4CC);
+    }
+
+    gt_0531D4CC = TriggerCreate("gt_modeSelect");
+
+    if (gt_D70D94F7 != null){
+        TriggerDestroy(gt_D70D94F7);
+    }
+
+    gt_D70D94F7 = TriggerCreate("gt_loadSpSkillTrigger");
+
+    if (gt_ED707C50 != null){
+        TriggerDestroy(gt_ED707C50);
+    }
+
+    gt_ED707C50 = TriggerCreate("gt_loadTrainMode");
+
+
+    if (gt_CF5EF86B != null){
+        TriggerDestroy(gt_CF5EF86B);
+    }
+
+    gt_CF5EF86B = TriggerCreate("gt_dynamicSwitchGvData");
+    TriggerEnable(gt_CF5EF86B, false);
+    TriggerAddEventUnitClick(gt_CF5EF86B, null, c_playerAny);
+}

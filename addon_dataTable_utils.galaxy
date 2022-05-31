@@ -31,7 +31,30 @@ int getHerolastUpgradeSkillIndex(unit inUnit){
     return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+"_lastUpgradeSkill");
 }
 
+int getTechRegisteredIndex(){
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,"techRegisteredIndex");
+}
+
+string getTechRegistered(int index){
+    return DataTableInstanceGetString(gv_dataTableDynamicData,IntToString(index));
+}
+
+int getTechRegisteredLevel(unit inUnit, string tech){
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+"_"+ tech);
+}
+
 //--------------------------------------set-----------------------------------------------
+
+void setTechRegisteredLevel(unit inUnit, string tech , int level){
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+"_"+ tech,level);
+}
+
+void setTechRegistered(string tech){
+    int index = DataTableInstanceGetInt(gv_dataTableDynamicData,"techRegisteredIndex");
+    DataTableInstanceSetString(gv_dataTableDynamicData,IntToString(index),tech);
+    DataTableInstanceSetInt(gv_dataTableDynamicData,"techRegisteredIndex",index + 1);
+}
+
 void setHeroSkillLearnStat(unit inUnit,int index,int stat){
     DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_learnStat",stat);
 }
