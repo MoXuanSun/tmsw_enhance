@@ -7,7 +7,7 @@
 //->(gt_07C5E602,gt_24D8433E,gt_06F46C59,gt_B8A29486,gt_D5601087)
 //->gf_07DE1913->gt_ED707C50
 
-//覆盖gt_36068630
+//gt_36068630
 //删除进入时的玩家句柄提示信息
 bool gt_gameInit(bool testConds,bool runActions){
     //设置游戏速度
