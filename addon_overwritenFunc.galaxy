@@ -51,15 +51,3 @@ void showSkillUpgradeBtn(int player,unit inUnit){
     DialogControlSetVisible(gv_99F9B79B[1], PlayerGroupSingle(player), true);
 }
 
-void initGlobalValues(){
-    gv_heroEstatStr[0] = "dbup_e_stat_str_01";
-    gv_heroEstatStr[1] = "dbup_e_stat_str_06";
-    gv_heroEstatStr[2] = "dbup_e_stat_str_11";
-    gv_heroEstatStr[3] = "dbup_e_stat_str_16";
-    gv_heroEstatStr[4] = "dbup_e_stat_str_21";
-    gv_heroEstatStr[5] = "dbup_e_stat_str_26";
-    gv_heroEstatStr[6] = "dbup_e_stat_str_31";
-    gv_heroEstatStr[7] = "dbup_e_stat_str_36";
-    gv_heroEstatStr[8] = "dbup_e_stat_str_41";
-    gv_heroEstatStr[9] = "dbup_e_stat_str_46";
-}

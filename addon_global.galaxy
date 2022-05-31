@@ -1,9 +1,16 @@
-//e技能upgradestr
+//GongSunink 2022
 string[10] gv_heroEstatStr;
 
 fixed[1000] gv_nums;
 
 int gv_dataTableDynamicData;
+
+struct abilityAndSkillsPreData{
+    int[gv_958F1679 + 1][5] heroAblityData;
+    int[gv_958F1679 + 1][5][5] heroSkillMaxlevelData;
+};
+
+abilityAndSkillsPreData gv_abilityAndSkillsPreDataInstance;
 
 unitgroup unitCreated;
 
@@ -11,4 +18,26 @@ void updateExpBar(int player,unit inUnit);
 
 void showSkillUpgradeBtn(int player,unit inUnit);
 
-string getPlayerHeroLevelKey(int inPlayer,unit inUnit);
+int getHeroSkillLearnStat(unit inUnit,int index);
+
+int getPlayerUpgradePoints(int inPlayer);
+
+int getHeroSkillLevel(unit inUnit,int index);
+
+int getHeroSkillLastUpgradeLevel(unit inUnit,int index);
+
+void setHeroSkillLearnStat(unit inUnit,int index,int stat);
+
+void setPlayerUpgradePoints(int inPlayer,int upgradePoints);
+
+void setHeroSkillLevel(unit inUnit,int index,int level);
+
+void setHeroSkillLastUpgradeLevel(unit inUnit,int index,int level);
+
+void setHeroPropert(unit inUntt,int index,fixed value);
+
+void setHerolastUpgradeSkillIndex(unit inUnit,int index);
+
+fixed getHeroPropert(unit inUnit,int index);
+
+int getHerolastUpgradeSkillIndex(unit inUnit);

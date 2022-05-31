@@ -9,15 +9,22 @@
 //gt_ED707C50 -> gt_loadTrainMode
 //gt_CF5EF86B -> gt_dynamicSwitchUnitData unitClick
 
+//call tree
+//mapInit->gt_36068630->gt_AE486128->gf_AEDFCCEC->gf_9E0FD04B
+//timeElapsed(2.0s)->gt_0531D4CC->gt_CC470061->gt_CA75246F->gt_0C458B09(disabled)
+//->gt_F16108BA(disabled)->gt_610A1DC5->gf_654885B9->gt_D70D94F7->(gt_A42AFADF,gt_67FDA500gt_A21467A7)
+//->(gt_07C5E602,gt_24D8433E,gt_06F46C59,gt_B8A29486,gt_D5601087)
+//->gf_07DE1913->gt_ED707C50
+
 //覆盖gt_CF5EF86B
-//动态切换全局变量
+//测试模式下，点击单位动态切换全局变量
 //gv_131E8983 player : heroid
 //gv_71C054E5 player : herounit
 //gv_893C301B player : level
 //gv_5DDEB9BD player-(hero_skillindex) : 1/0 
 //gv_63B35897 player : upgrade-points
 //gv_D0B36B8F player-(hero-skillindex+1) : level
-//gv_203166CD player-(hero-skillindex+1) : last-upgrade-player-level
+//gv_203166CD player-(hero-skillindex) : last-upgrade-player-level
 //gv_9CB902A4 player-propertyid : value
 //gv_26FF03B5 player ：last-upgrade-skill-index
 bool gt_dynamicSwitchGvData(bool testConds, bool runActions){
@@ -25,23 +32,36 @@ bool gt_dynamicSwitchGvData(bool testConds, bool runActions){
     int ePlayer = EventPlayer();
     unit eUnit = EventUnit();
     int eUnitLevel = UnitLevel(eUnit);
+    unit lastUnit = gv_71C054E5[ePlayer];
 
     int i;
+
+    for (i = 0 ; i < 4 ; i += 1){
+        setHeroSkillLearnStat(lastUnit,i,gv_5DDEB9BD[ePlayer][i]);
+    }
+
+    setPlayerUpgradePoints(ePlayer,gv_63B35897[ePlayer]);
+
+    for (i = 0 ; i < 4 ; i += 1){
+        setHeroSkillLevel(lastUnit,i + 1,gv_D0B36B8F[ePlayer][i + 1]);
+    }
+
+    for (i = 0 ; i < 4 ; i += 1){
+        setHeroSkillLastUpgradeLevel(lastUnit,i + 1,gv_203166CD[ePlayer][i]);
+    }
+
+    for (i = 0 ; i < 15 ; i += 1){
+        setHeroPropert(lastUnit,i,gv_9CB902A4[ePlayer][i]);
+    }
+
+    setHerolastUpgradeSkillIndex(eUnit,gv_26FF03B5[ePlayer]);
+
+    
 
     //取消选择
     UnitSelect(gv_71C054E5[ePlayer], ePlayer, false);
     
     // UnitBehaviorRemove(EventUnit(), "nodie2", 1);
-    
-    // Wait(0.0625, c_timeGame);
-
-    //选择新单位
-    UnitSelect(eUnit, ePlayer, true);
-    
-    // UnitBehaviorAddPlayer(EventUnit(), "nodie2", EventPlayer(), 1);
-
-    //提示点击
-    UIAlertUnit("MyClickLocations", ePlayer, StringToText(""), null, eUnit);
 
     //可改为dataTable存储所有heroTypeName对应的id
     gv_131E8983[ePlayer] = StringToInt(StringSub(UnitGetType(eUnit),7,8));
@@ -51,15 +71,56 @@ bool gt_dynamicSwitchGvData(bool testConds, bool runActions){
     gv_893C301B[ePlayer] = eUnitLevel;
 
     for (i = 0 ; i < 4 ; i += 1){
-        gv_5DDEB9BD[ePlayer][i] = getHeroSkillLearnStat(ePlayer,eUnit,i);   
+        gv_5DDEB9BD[ePlayer][i] = getHeroSkillLearnStat(eUnit,i);   
     }
 
-    gv_63B35897[ePlayer] = getPlayerUpgradePoint(ePlayer);
+    gv_63B35897[ePlayer] = getPlayerUpgradePoints(ePlayer);
 
     
+    for (i = 0 ; i < 4 ; i += 1){
+        gv_D0B36B8F[ePlayer][i + 1] = getHeroSkillLevel(eUnit,i);
+    }
 
+    for (i = 0 ; i < 4 ; i += 1){
+        gv_203166CD[ePlayer][i] = getHeroSkillLastUpgradeLevel(eUnit,i);
+    }
+
+    for (i = 0 ; i < 15 ; i += 1){
+        gv_9CB902A4[ePlayer][i] = getHeroPropert(lastUnit,i);
+    }
+
+    gv_26FF03B5[ePlayer] = getHerolastUpgradeSkillIndex(eUnit);
+
+    UIAlertUnit("MyClickLocations", ePlayer, StringToText(""), null, eUnit);
+
+    //hero skills
+    // TriggerExecute(gt_449346FA, false, true);
+    // TriggerExecute(gt_936A4CD0, false, true);
+    // TriggerExecute(gt_4763C627, false, true);
+    // TriggerExecute(gt_DC1D1784, false, true);
+    // TriggerExecute(gt_B7CDF35B, false, true);
+
+    if (StringToInt(StringSub(UnitGetType(eUnit),7,8)) != 18){
+        
+    }
+
+    //选择新单位
+    UnitSelect(eUnit, ePlayer, true);
     
-    // DataTableInstanceGetInt(gv_dataTableDynamicData,getPlayerHeroLevelKey(ePlayer,eUnit));
+    // UnitBehaviorAddPlayer(EventUnit(), "nodie2", EventPlayer(), 1);
+
+    //提示点击
+    
+    //更新ui
+    libNtve_gf_SetDialogItemImage(gv_5C4043F8.lv_D11CB209, (("character\\interface\\face\\interface_face_" 
+    + IntToString(gv_131E8983[ePlayer]) + ".dds")), PlayerGroupSingle(1));
+    gf_01345A24(1);
+    gf_3A83C136(1);
+    libNtve_gf_SetDialogItemImage(gv_5C4043F8.lv_A9C8BA19, "GamesUis\\frame_mp_bar_frame.dds", PlayerGroupSingle(ePlayer));
+    libNtve_gf_SetDialogItemImage(gv_5C4043F8.lv_472F835E, "GamesUis\\frame_mp_bar_image.dds", PlayerGroupSingle(ePlayer));
+    gf_2F0F2F25(ePlayer);
+    libNtve_gf_SetDialogItemImage(gv_169C778B[0], gv_AA1BDB6C[gv_131E8983[ePlayer]], PlayerGroupSingle(ePlayer));
+    libNtve_gf_SetDialogItemText(gv_169C778B[1], UnitTypeGetName(UnitGetType(gv_71C054E5[ePlayer])), PlayerGroupSingle(ePlayer));
     return true;
 }
 
@@ -151,6 +212,8 @@ bool gt_onUnitGainLevel(bool testConds, bool runActions){
     int ePlayer = EventPlayer();
     unit eUnit = EventUnit();
     
+    int i;
+    
     if (testConds)
     {
         if (!((UnitBehaviorCount(EventUnit(), "dbdo_ex3") == 0)))
@@ -167,6 +230,11 @@ bool gt_onUnitGainLevel(bool testConds, bool runActions){
         return true;
     }
     
+    //减去升级所需经验值
+    gv_CC0B9C16[EventPlayer()].lv_BDE71CAE -= FixedToInt(gf_8EF92EC0(gv_893C301B[EventPlayer()]));
+
+    gv_893C301B[EventPlayer()] += 1;
+
     //升级进度条
     //修改为UnitLevel(EventUnit()) >= 24
     //unitLevel和UnitXPgetCurrentLevel的结果相同
@@ -179,43 +247,14 @@ bool gt_onUnitGainLevel(bool testConds, bool runActions){
         updateExpBar(ePlayer,eUnit);
     }
 
-    // lv_CA6BF814 = 0;
-    // for (; ((autoF8F70090_ai >= 0 && lv_CA6BF814 <= autoF8F70090_ae) || (autoF8F70090_ai < 0 && lv_CA6BF814 >= autoF8F70090_ae)); lv_CA6BF814 += autoF8F70090_ai)
-    // {.
-    //     auto15CE3F4F_val = gv_385F7DDF[EventPlayer()].lv_938D9C7F[(lv_CA6BF814 + 1)][gv_BB156610.lv_0195430E[EventPlayer()][(lv_CA6BF814 + 1)]];
-    //     if (auto15CE3F4F_val == 6)
-    //     {
-    //         lv_C2D36F8B[lv_CA6BF814] = 0;
-    //         lv_3090D3FC[lv_CA6BF814] = 1;
-    //     }
-    //     else if (auto15CE3F4F_val == 5)
-    //     {
-    //         lv_C2D36F8B[lv_CA6BF814] = 3;
-    //         lv_3090D3FC[lv_CA6BF814] = 4;
-    //     }
-    //     else if (auto15CE3F4F_val == 4)
-    //     {
-    //         lv_C2D36F8B[lv_CA6BF814] = 4;
-    //         lv_3090D3FC[lv_CA6BF814] = 8;
-    //     }
-    //     else if (auto15CE3F4F_val == 3)
-    //     {
-    //         lv_C2D36F8B[lv_CA6BF814] = 5;
-    //         lv_3090D3FC[lv_CA6BF814] = 13;
-    //     }
-    //     else
-    //     {
-    //     }
-    // }
     //升级效果
     PlayerCreateEffectUnit(ePlayer, "dbhy_00_05", eUnit);
-    // gv_63B35897[EventPlayer()] += lv_E315DE35;
+    //增加升级点数
+
+    gv_63B35897[EventPlayer()] += 1;
 
     //应该是更新计分板等级
     // libNtve_gf_SetDialogItemText(gv_3050FA16[ePlayer][8], IntToText(eUnitLevel), PlayerGroupAll());
-
-    //e技能
-    // showMsg(1,IntToString(StringToInt(StringSub(UnitGetType(eUnit),7,8))));
     TechTreeUpgradeAddLevel(ePlayer, "dbup_e_stat_title0", 1);
     TechTreeUpgradeAddLevel(ePlayer,  gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(eUnit),7,8)))] , 1);
 
@@ -288,17 +327,13 @@ bool gt_gameInit(bool testConds,bool runActions){
     //停止播放音乐
     SoundtrackStopCurrent(PlayerGroupAll(), c_soundtrackCategoryMusic, false);
     
-    //替换单位行为
+    //这个单位不清楚用途 可能是测试使用的 暂时不移除
     UnitBehaviorRemove(UnitFromId(1587265046), "UnknownBehavior2222", 1);
     UnitBehaviorAdd(UnitFromId(1587265046), "dbdomisssssssssssss", UnitFromId(1587265046), 1);
-
-    //隐藏单位
     libNtve_gf_ShowHideUnit(UnitFromId(1587265046), false);
-
-    //覆盖statusbar
     UnitStatusBarClearOverride(UnitFromId(1587265046));
 
-    //时间
+    //时间 计时器使用
     lib6AD83328_gv_curr_time_variable.lv_time_day = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_hour = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_min = 9999;
@@ -360,7 +395,7 @@ bool gt_modeSelect(bool testConds,bool runActions){
     // 原作者的某些黑名单
     // TriggerExecute(gt_0C458B09, false, true);
     
-    //按下8.将全局变量gv_12D739B9变为13,只有当全局变量不为13时才有效
+    //按下8.将全局变量gv_12D739B9更新为eventplayer
     TriggerEnable(gt_F16108BA, false);
     
     //1.开始随机播放bgm
@@ -424,12 +459,23 @@ bool gt_loadSpSkillTrigger(bool testConds,bool runActions){
     //爱丽丝R技能效果
     TriggerEnable(gt_D5601087, true);
 
+    //克劳技能
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_1q", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_2w", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_3e", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_4r", true);
+    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_4r_00", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_1q", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_2w", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_3e", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r_00", true);
+    UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r", true);
+    
     //升级
     // gf_EF9B8CC6(1);
 
     //点击英雄切换ui，更新数据
     TriggerEnable(gt_CF5EF86B, true);
-
  
     return true;
 }
@@ -482,7 +528,10 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     //更新数据
     gf_1A8469C6();
 
-    //timer、等级
+    TechTreeRequirementsEnable(1,false);
+    
+
+    //Timer 测试模式不显示
     // gf_9F5F6F17();
     
     ///---------------------gf_9F5F6F17----------------------
@@ -495,29 +544,22 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     gf_01345A24(1);
     gf_3A83C136(1);
 
-    //非单人模式不显示
-    if ((gv_6CAD1DE1 == false && gv_AC56085D == false))
-    {
-        DialogSetVisible(gv_5C4043F8.lv_AF2E051A, PlayerGroupSingle(1), false);
-    }
-
-    
     //重复调用 --gt_85BAD3D9
     // TriggerExecute(gt_BEAA2115, false, false);
     // TriggerExecute(gt_6A0C33ED, false, false);
 
     //时间显示
-    TimerWindowCreate(gv_8930AB6D, StringExternal("Param/Value/D188FC06"), true, false);
-    gv_047B588D = TimerWindowLastCreated();
-    TimerWindowSetAnchor(gv_047B588D, c_anchorBottomLeft, 0, 0);
-    TimerWindowSetPosition(TimerWindowLastCreated(), 120, 920);
-    TimerWindowSetFixedHeight(TimerWindowLastCreated(), 80);
-    TimerWindowSetFormat(TimerWindowLastCreated(), StringToText("<mintotal/>:<sec2/>"));
-    TimerWindowSetStyle(TimerWindowLastCreated(), c_timerWindowStyleVerticalTitleTime, false);
-    TimerWindowShowBorder(TimerWindowLastCreated(), true);
-    DialogControlHookupStandard(c_triggerControlTypePanel, "UIContainer\\ConsoleUIContainer\\TriggerWindowPanel\\TimerWindowTemplate");
-    DialogControlSendAnimationEvent(DialogControlLastCreated(), PlayerGroupAll(), "HighlightStop");
-    TimerStart(gv_8930AB6D, 1.0, false, c_timeGame);
+    // TimerWindowCreate(gv_8930AB6D, StringExternal("Param/Value/D188FC06"), true, false);
+    // gv_047B588D = TimerWindowLastCreated();
+    // TimerWindowSetAnchor(gv_047B588D, c_anchorBottomLeft, 0, 0);
+    // TimerWindowSetPosition(TimerWindowLastCreated(), 120, 920);
+    // TimerWindowSetFixedHeight(TimerWindowLastCreated(), 80);
+    // TimerWindowSetFormat(TimerWindowLastCreated(), StringToText("<mintotal/>:<sec2/>"));
+    // TimerWindowSetStyle(TimerWindowLastCreated(), c_timerWindowStyleVerticalTitleTime, false);
+    // TimerWindowShowBorder(TimerWindowLastCreated(), true);
+    // DialogControlHookupStandard(c_triggerControlTypePanel, "UIContainer\\ConsoleUIContainer\\TriggerWindowPanel\\TimerWindowTemplate");
+    // DialogControlSendAnimationEvent(DialogControlLastCreated(), PlayerGroupAll(), "HighlightStop");
+    // TimerStart(gv_8930AB6D, 1.0, false, c_timeGame);
 
     //重复调用 -----gt_85BAD3D9 
     // TriggerExecute(gt_0315FDBE, false, false);
@@ -525,18 +567,9 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     //全局dialog点击触发
     TriggerEnable(gt_B5F15D4C, true);
 
-    ///-----------------------------------
-    //克劳技能
-    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_1q", true);
-    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_2w", true);
-    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_3e", true);
-    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_4r", true);
-    UnitAbilityEnable(UnitFromId(20), "dbnu19_1_4r_00", true);
-    UnitAbilityShow(UnitFromId(20), "dbnu19_1_1q", true);
-    UnitAbilityShow(UnitFromId(20), "dbnu19_1_2w", true);
-    UnitAbilityShow(UnitFromId(20), "dbnu19_1_3e", true);
-    UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r_00", true);
-    UnitAbilityShow(UnitFromId(20), "dbnu19_1_4r", true);
+    ///-----------------------------------test
+    //回蓝回血
+    TriggerEnable(gt_A334548C,false);
 
     showMsg(1,"加载完毕~!");
     return true;
@@ -596,13 +629,15 @@ void initOverwriteTrigger(){
     gt_ED707C50 = TriggerCreate("gt_loadTrainMode");
 
 
-    // if (gt_CF5EF86B != null){
-    //     TriggerDestroy(gt_CF5EF86B);
-    // }
+    if (gt_CF5EF86B != null){
+        TriggerDestroy(gt_CF5EF86B);
+    }
 
-    // gt_CF5EF86B = TriggerCreate("gt_dynamicSwitchGvData");
-    // TriggerEnable(gt_CF5EF86B, false);
-    // TriggerAddEventUnitClick(gt_CF5EF86B, null, c_playerAny);
+    gt_CF5EF86B = TriggerCreate("gt_dynamicSwitchGvData");
+    TriggerEnable(gt_CF5EF86B, false);
+    TriggerAddEventUnitClick(gt_CF5EF86B, null, c_playerAny);
+
+   
 
     initDataTableInstance();
 }

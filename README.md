@@ -38,6 +38,9 @@
 - 供学习与交流
 
 ## 四、计划
+### 0.地图拓展
+- [ ] 动态切换全局变量、科技升级
+- [ ]
 ### 1.指令系统
 - [x] -summon heroid player(1 for ally,0 for enemy)
 - [x] -testCH 测试次数 暴击点数

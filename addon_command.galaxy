@@ -71,6 +71,8 @@ unit creatHero(int player,int id){
 
 //通过id创建一个空英雄
 unit createEmpHero(int player,int id,int side){
+    int i;
+    string test;
     if (side == 1){
         //ally
         libNtve_gf_CreateUnitsWithDefaultFacing(1,gv_367C7760[id],0,gv_ally, PointFromName("test"));          
@@ -80,7 +82,7 @@ unit createEmpHero(int player,int id,int side){
     //升级行为
     // UnitBehaviorAddPlayer(UnitLastCreated(), "dbdo_ex", 1, 1);
     
-    DialogControlSetEnabled(gv_3050FA16[player][1], PlayerGroupAll(), true);
+    // DialogControlSetEnabled(gv_3050FA16[player][1], PlayerGroupAll(), true);
     //show or hide 技能
     // gf_ED9D4333(UnitLastCreated(), player);
 
@@ -91,9 +93,44 @@ unit createEmpHero(int player,int id,int side){
     // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie4", player, 1);
     // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie42", player, 1);
     // UnitBehaviorAddPlayer(UnitLastCreated(), "nodie2", player, 1);
-    showMsg(1,IntToString(UnitGetTag(UnitLastCreated())));
+    // showMsg(1,IntToString(UnitGetTag(UnitLastCreated())));
+    // for (;i < 20;i+=1){
+    //     test += UnitAbilityGet(UnitLastCreated(),i)+"_"+IntToString(i)+"   ";
+    //     if((i+1)%5 == 0){
+    //         test += "\n";
+    //     }
+    // }
+    // showMsg(1,test);
 
-    UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
+    // UnitAbilityShow(UnitLastCreated(),"dbnu01_1_1q",true);
+    // UnitAbilityEnable(UnitLastCreated(),"dbnu01_1_1q",true);
+  
+    
+
+    // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_0t", true);
+    // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
+    // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_2w", true);
+    // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_3e", true);
+    // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_4r", true);
+    // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_0t", true);
+    // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
+    // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_2w", true);
+    // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_3e", true);
+    // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_4r", true);
+    // UnitAbilityChangeLevel(UnitLastCreated(),"dbnu18_1_0q",3);
+
+    TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus",1);
+    TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus_2",1);
+    
+    TechTreeUpgradeAddLevel(1,"dhup_skillJ_q",1);
+    TechTreeUpgradeAddLevel(1,"dhup_skillJ_q_00",1);
+
+    //设置为负数可以降低科技等级、、、真不知道暴雪怎么想的 为什么不分开成两个方法 debug way: 问了一圈 忙了一下午 还不如在文档里面搜索这个函数看看，。。。
+    UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
+    UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
+  
+
+    // UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
 
     // UnitGroupAdd(summonedUnit,UnitLastCreated());
     return UnitLastCreated();

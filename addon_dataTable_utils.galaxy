@@ -1,0 +1,57 @@
+//gongSunink 2022
+
+//-----------------------------------get---------------------------------------------------------
+int getHeroSkillLearnStat(unit inUnit,int index){
+    //unittag-skillindex_learstat
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_learnStat");
+}
+
+int getPlayerUpgradePoints(int inPlayer){
+    // playerid_upgradePoints
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(inPlayer)+"_upgradePoints");
+}
+
+int getHeroSkillLevel(unit inUnit,int index){
+    //unittag-index_skillLevel
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_skillLevel");
+}
+
+int getHeroSkillLastUpgradeLevel(unit inUnit,int index){
+    //unittag-index_upgradeLevel
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_lastUpgradeLevel");
+}
+
+fixed getHeroPropert(unit inUnit,int index){
+    //unittag-index_propert
+    return DataTableInstanceGetFixed(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_propert");
+}
+
+int getHerolastUpgradeSkillIndex(unit inUnit){
+    //unittag_lastUpgradeSkill
+    return DataTableInstanceGetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+"_lastUpgradeSkill");
+}
+
+//--------------------------------------set-----------------------------------------------
+void setHeroSkillLearnStat(unit inUnit,int index,int stat){
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_learnStat",stat);
+}
+
+void setPlayerUpgradePoints(int inPlayer,int upgradePoints){
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(inPlayer)+"_upgradePoints",upgradePoints);
+}
+
+void setHeroSkillLevel(unit inUnit,int index,int level){
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_skillLevel",level);
+}
+
+void setHeroSkillLastUpgradeLevel(unit inUnit,int index,int level){
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_lastUpgradeLevel",level);
+}
+
+void setHeroPropert(unit inUnit,int index,fixed value){
+    DataTableInstanceSetFixed(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+IntToString(index)+"_upgradePoints",value);
+}
+
+void setHerolastUpgradeSkillIndex(unit inUnit,int index){
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+"_lastUpgradeSkill",index);
+}
