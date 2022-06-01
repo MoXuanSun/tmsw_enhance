@@ -8,7 +8,8 @@
 //->gf_07DE1913->gt_ED707C50
 
 //gt_36068630
-//删除进入时的玩家句柄提示信息
+//1.删除进入时的玩家句柄提示信息
+//2.延迟
 bool gt_gameInit(bool testConds,bool runActions){
     //设置游戏速度
     GameSetSpeedValue(c_gameSpeedFaster);
@@ -25,27 +26,27 @@ bool gt_gameInit(bool testConds,bool runActions){
     libNtve_gf_ShowHideUnit(UnitFromId(1587265046), false);
     UnitStatusBarClearOverride(UnitFromId(1587265046));
 
-    //时间 计时器使用
+    //时间
     lib6AD83328_gv_curr_time_variable.lv_time_day = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_hour = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_min = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_month = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_sec = 9999;
     lib6AD83328_gv_curr_time_variable.lv_time_year = 9999;
-    Wait(0.0625, c_timeGame);
     curr_time_script();
-    Wait(0.0625, c_timeGame);
 
-    //平衡修改升级
+    //平衡修改升级 dbup_new_roon_basic_modifiy 所有单位移动速度加成：1
     TriggerExecute(gt_AE486128, true, false);
 
     //黑色背景
     gf_AEDFCCEC();
-    // Wait(1.4, c_timeGame);
 
     //隐藏所有uiFrame
     gf_9E0FD04B();
     
+    //-----------------------------------拓展--------------------------------------
+    //原本的模式选择绑定在eventTimeElapsed(2.0s) 这里把他移动到init触发器末尾那直接调用，调整为等待执行结束
+
     //gt_modeselect
     TriggerExecute(gt_0531D4CC,false,true);
 
@@ -63,8 +64,23 @@ bool gt_gameInit(bool testConds,bool runActions){
 }
 
 //gt_0531D4CC
-//修改为不论多少玩家进入都会进入训练营模式
+//1.不论多少玩家开游戏都会进入训练营模式
+//2.移除对gv_6CAD1DE1的判断，用于进入作者自定义测试模式
+//3.移除延迟，全部修改为等待执行结束
 bool gt_modeSelect(bool testConds,bool runActions){
+
+    //观战者
+    if ((PlayerStatus(13) == c_playerStatusActive))
+    {
+        PlayerGroupAdd(gv_CB47AB71, 13);
+        PlayerGroupAdd(gv_8234C417, 13);
+    }
+    if ((PlayerStatus(14) == c_playerStatusActive))
+    {
+        PlayerGroupAdd(gv_CB47AB71, 14);
+        PlayerGroupAdd(gv_8234C417, 14);
+    }
+
     // 激活ping panel
     libLbty_gf_EnableDisablePingPanel(true, PlayerGroupAll());
 
@@ -75,17 +91,17 @@ bool gt_modeSelect(bool testConds,bool runActions){
     libNtve_gf_ShowHideUnit(UnitFromId(168525155), false);
 
     //1.从bank加载设置，如果bank不存在则为默认设置
-    //2.将玩家按照其语言设置存入不同的玩家组，以便本地化
+    //2.将玩家按照其语言设置、titleui和decorationui存入不同的玩家组
     TriggerExecute(gt_CC470061, false, true);
 
     //设置光照
     GameSetLighting("Char2", 1.4);
 
-    //创建颜色常量
-    TriggerExecute(gt_CA75246F, false, false);
+    //创建y一些颜色常量
+    TriggerExecute(gt_CA75246F, false, true);
 
-    // 原作者的某些黑名单
-    // TriggerExecute(gt_0C458B09, false, true);
+    //原作者的某些名单
+    TriggerExecute(gt_0C458B09, false, true);
     
     //按下8.将全局变量gv_12D739B9更新为eventplayer
     TriggerEnable(gt_F16108BA, false);

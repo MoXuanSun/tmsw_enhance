@@ -168,7 +168,7 @@ bool onTimerCallBack(bool testConds,bool runActions){
 }
 
 void cmd_effect(int player,string p1,string p2){
-
+    
 }
 
 //测试暴击次数 times测试次数 criticalpoint暴击点数
