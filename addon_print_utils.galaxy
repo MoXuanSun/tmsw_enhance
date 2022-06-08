@@ -1,0 +1,26 @@
+//GongSunink 2022
+
+void printString(playergroup inPlayerGroup,string str){
+    printDefault(inPlayerGroup,StringToText(str));
+}
+
+void printInt(playergroup inPlayerGroup, int value){
+    printDefault(inPlayerGroup,IntToText(value));
+}
+
+void printFixed(playergroup inPlayerGroup, fixed value, int precision){
+    printDefault(inPlayerGroup,FixedToText(value,precision));
+}
+
+void printBool(playergroup inPlayerGroup, bool value){
+    printDefault(inPlayerGroup,IntToText(BoolToInt(value)));
+}
+
+void printf(playergroup inPlayerGroup, text msg, int messageArea){
+    UIDisplayMessage(inPlayerGroup,messageArea,msg);
+}
+
+void printDefault(playergroup inPlayerGroup, text msg){
+    UIDisplayMessage(inPlayerGroup,defaultMessageArea,msg);
+}
+

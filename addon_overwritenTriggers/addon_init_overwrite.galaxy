@@ -7,7 +7,7 @@
 //gt_0531D4CC -> gt_modeSelect 
 //gt_D70D94F7 -> gt_loadSpSkillTrigger
 //gt_ED707C50 -> gt_loadTrainMode
-//gt_CF5EF86B -> gt_dynamicSwitchUnitData unitClick
+//gt_CF5EF86B -> gt_gt_dynamicSwitching unitClick
 void initOverwriteTrigger(){
 
     if (gt_5E391F04 != null){
@@ -34,8 +34,8 @@ void initOverwriteTrigger(){
     TriggerAddEventUnitGainExperience(gt_23443835, null);
 
     TriggerEnable(gt_36068630,false);
-    //原图的mapinit
 
+    //原图的mapinit
     TriggerAddEventMapInit(TriggerCreate("gt_gameInit"));
 
     if (gt_0531D4CC != null){
@@ -61,7 +61,7 @@ void initOverwriteTrigger(){
         TriggerDestroy(gt_CF5EF86B);
     }
 
-    gt_CF5EF86B = TriggerCreate("gt_dynamicSwitchGvData");
+    gt_CF5EF86B = TriggerCreate("gt_dynamicSwitching");
     TriggerEnable(gt_CF5EF86B, false);
     TriggerAddEventUnitClick(gt_CF5EF86B, null, c_playerAny);
 }

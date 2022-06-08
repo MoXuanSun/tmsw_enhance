@@ -1,0 +1,8 @@
+//GongSun 2022
+
+//datatable 初始化
+void initDataTableInstance(){
+    DataTableInstanceCreate();
+    gv_dataTableDynamicData = DataTableInstanceLastCreated();
+}
+

@@ -44,6 +44,12 @@ int getTechRegisteredLevel(unit inUnit, string tech){
 }
 
 //--------------------------------------set-----------------------------------------------
+void setRawData(int p1,int p2,string sp1,string sp2,int value,string svalue,string suffix){
+    if (svalue != null){
+        DataTableInstanceSetString(gv_dataTableDynamicData,IntToString(p1)+IntToString(p2)+sp1+sp2+suffix,svalue);
+    }
+    DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(p1)+IntToString(p2)+sp1+sp2+suffix,value);
+}
 
 void setTechRegisteredLevel(unit inUnit, string tech , int level){
     DataTableInstanceSetInt(gv_dataTableDynamicData,IntToString(UnitGetTag(inUnit))+"_"+ tech,level);

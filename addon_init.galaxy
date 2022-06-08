@@ -1,10 +1,8 @@
-void initDataTableInstance(){
-    DataTableInstanceCreate();
-    gv_dataTableDynamicData = DataTableInstanceLastCreated();
-}
+//GongSunink 2022
+//全局初始化------
+
 
 void initaddons(){
-
     initDataTableInstance();
     initOverwriteTrigger();
     initGlobalValues();

@@ -1,0 +1,113 @@
+//GongSunink 2022
+
+//gt_D0366A97 覆盖
+bool gt_onUnitGainLevel(bool testConds, bool runActions){
+    
+    int eUnitLevel = UnitLevel(EventUnit());
+    int ePlayer = EventPlayer();
+    unit eUnit = EventUnit();
+    
+    int i;
+    
+    if (testConds)
+    {
+        if (!((UnitBehaviorCount(EventUnit(), "dbdo_ex3") == 0)))
+        {
+            return false;
+        }
+        if (!((UnitBehaviorCount(EventUnit(), "HallucinationTimedLife") == 0)))
+        {
+            return false;
+        }
+    }
+    if (!runActions)
+    {
+        return true;
+    }
+    
+    //减去升级所需经验值
+    gv_CC0B9C16[EventPlayer()].lv_BDE71CAE -= FixedToInt(gf_8EF92EC0(gv_893C301B[EventPlayer()]));
+
+    gv_893C301B[EventPlayer()] += 1;
+
+    //升级进度条
+    //修改为UnitLevel(EventUnit()) >= 24
+    //unitLevel和UnitXPgetCurrentLevel的结果相同
+    if (eUnitLevel >= 24)
+    {
+        DialogControlSetSize(gv_5C4043F8.lv_E25A8ED0, PlayerGroupSingle(ePlayer), 88, 16);
+    }
+    else
+    {
+        updateExpBar(ePlayer,eUnit);
+    }
+
+    //升级效果
+    PlayerCreateEffectUnit(ePlayer, "dbhy_00_05", eUnit);
+
+    //增加升级点数
+    gv_63B35897[EventPlayer()] += 1;
+
+    //应该是更新计分板等级
+    // libNtve_gf_SetDialogItemText(gv_3050FA16[ePlayer][8], IntToText(eUnitLevel), PlayerGroupAll());
+    TechTreeUpgradeAddLevel(ePlayer, "dbup_e_stat_title0", 1);
+    TechTreeUpgradeAddLevel(ePlayer,  gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(eUnit),7,8)))] , 1);
+
+    //dhup_01_1_0t_01 dbup_06_1_0t_06 dbup_07_1_0t dhup_07_1_0t_00
+    gf_72F2506B(ePlayer);
+
+    gf_139B0A84(ePlayer);
+
+    gf_D5AA5B4B(ePlayer);
+
+    gf_F1BEAFBB(ePlayer, -1, 0);
+
+    gf_91088DA7(ePlayer);
+    // showSkillUpgradeBtn(ePlayer,eUnit);
+
+    if (((UnitLevel(eUnit) == 5) || (UnitLevel(eUnit) == 9) || (UnitLevel(eUnit) == 13) || (UnitLevel(eUnit) == 17)))
+    {
+        TechTreeUpgradeAddLevel(ePlayer, "dhup_skillJ_t", 1);
+        TechTreeUpgradeAddLevel(ePlayer, "dhup_skillJ_t_00", 1);
+        gv_D0B36B8F[ePlayer][0] += 1;
+        gf_A4FDA2D7(ePlayer);
+        gf_FA0E566D(ePlayer);
+    }
+
+    gf_2AF0A3EE(ePlayer, eUnit, gv_5C4043F8.lv_23D09B56, c_unitPropLifePercent, gv_5C4043F8.lv_24D62004, c_unitPropLife, c_unitPropLifeMax);
+    gf_2AF0A3EE(ePlayer, eUnit, gv_5C4043F8.lv_472F835E, c_unitPropEnergyPercent, gv_5C4043F8.lv_D9B13017, c_unitPropEnergy, c_unitPropEnergyMax);
+    return true;
+}
+
+//gt_23443835
+//更新函数修改为重写过的
+bool gt_onUnitGainExp(bool testConds,bool runActions){
+    if (testConds)
+    {
+        if (!((UnitBehaviorCount(EventUnit(), "dbdo_ex3") == 0)))
+        {
+            return false;
+        }
+        if (!((UnitBehaviorCount(EventUnit(), "HallucinationTimedLife") == 0)))
+        {
+            return false;
+        }
+        if (!((gv_71C054E5[EventPlayer()] == EventUnit())))
+        {
+            return false;
+        }
+        if (!((gv_893C301B[EventPlayer()] < 24)))
+        {
+            return false;
+        }
+    }
+    if (!runActions)
+    {
+        return true;
+    }
+    gv_CC0B9C16[EventPlayer()].lv_BDE71CAE += FixedToInt(EventUnitXPDelta());
+    updateExpBar(EventPlayer(),EventUnit());
+    
+    
+    return true;
+}

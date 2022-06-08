@@ -82,7 +82,7 @@ unit createEmpHero(int player,int id,int side){
     }else{
         libNtve_gf_CreateUnitsWithDefaultFacing(1,gv_367C7760[id],0,gv_enemy, PointFromName("test"));
     }
-    //升级行为
+    //老兵行为
     // UnitBehaviorAddPlayer(UnitLastCreated(), "dbdo_ex", 1, 1);
     
     // DialogControlSetEnabled(gv_3050FA16[player][1], PlayerGroupAll(), true);
@@ -125,24 +125,29 @@ unit createEmpHero(int player,int id,int side){
     TechTreeUpgradeAddLevel(EventPlayer(), "dbup_e_stat_title0", 1);
     TechTreeUpgradeAddLevel(EventPlayer(), gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(UnitLastCreated()),7,8)))], 1);
 
-    TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus",1);
-    TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus_2",1);
     
-    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
-    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
-    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
-    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
 
-    // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q",1);
-    // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q_00",1);
-
-    //设置为负数可以降低科技等级、、、真不知道暴雪怎么想的 为什么不分开成两个方法 debug way: 问了一圈 忙了一下午 还不如在文档里面搜索这个函数看看，。。。
-    UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
-    UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
+    // TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus",1);
+    // TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus_2",1);
     
-    showMsg(1,IntToString(TechTreeUpgradeCount(1,"dbup_ablv_q_plus",c_techCountCompleteOnly)));
+    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
 
-    TimerStart(time,5.0,false,c_timeGame);
+    // // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q",1);
+    // // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q_00",1);
+
+    // //RNM add = set 真不知道暴雪怎么想的 为什么不分开成两个方法 debug way: 问了一圈 忙了一下午 还不如在文档里面搜索这个函数看看，。。。
+    // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
+    // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
+    
+    // showMsg(1,IntToString(TechTreeUpgradeCount(1,"dbup_ablv_q_plus",c_techCountCompleteOnly)));
+
+
+    showMsg(1,FixedToString(PointGetX(UnitGetPosition(UnitLastCreated())),2)
+    +"|"+FixedToString(PointGetY(UnitGetPosition(UnitLastCreated())),2));
+    // TimerStart(time,5.0,false,c_timeGame);
 
     // UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
 

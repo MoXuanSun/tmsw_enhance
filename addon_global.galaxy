@@ -12,6 +12,8 @@ struct abilityAndSkillsPreData{
 
 abilityAndSkillsPreData gv_abilityAndSkillsPreDataInstance;
 
+int defaultMessageArea = c_messageAreaSubtitle; 
+
 unitgroup unitCreated;
 
 void updateExpBar(int player,unit inUnit);
@@ -61,3 +63,15 @@ void dynamicSwitchData();
 void initOverwriteTrigger();
 
 void initGlobalValues();
+
+void printString(playergroup inPlayerGroup,string str);
+
+void printInt(playergroup inPlayerGroup, int value);
+
+void printFixed(playergroup inPlayerGroup, fixed value, int precision);
+
+void printBool(playergroup inPlayerGroup, bool value);
+
+void printf(playergroup inPlayerGroup, text msg, int messageArea);
+
+void printDefault(playergroup inPlayerGroup, text msg);

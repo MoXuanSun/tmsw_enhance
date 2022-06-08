@@ -1,5 +1,16 @@
 //GongSunink 2022
-//测试模式下，点击单位动态切换全局变量
+
+//原图在设计上没有考虑一个玩家多个英雄不同英雄等级、不同技能等级、不同behavior和effect
+//在不修改原图的情况下,两种解决方案:
+//1.动态更新，原图测试模式下已经实现了一个简易的动态切换
+//2.重新设计一套系统
+
+//需要更新的数据：
+//游戏过程中使用的唯一对应键值，如玩家的英雄id、英雄单位
+//英雄等级、英雄技能等级、升级科技
+//behavior、effect
+
+//玩家选择不同单位，动态切换全局变量
 //gv_131E8983 player : heroid
 //gv_71C054E5 player : herounit
 //gv_893C301B player : level
@@ -106,7 +117,9 @@ void dynamicSwitchTechTree(){
     }
 }
 
-void setTechNeedDynamicSwitch(){
+void registerTechsNeedDynamicSwitch(){
+
+    // registerDynamicTech("")
 
     //gt_D0366A97
     registerDynamicTech("dbup_e_stat_title0");

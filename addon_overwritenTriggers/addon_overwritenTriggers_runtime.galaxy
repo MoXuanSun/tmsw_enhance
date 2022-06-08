@@ -1,0 +1,80 @@
+//gt_5E391F04 覆盖
+//测试模式下，不开启控制敌方单位则关闭，正常模式下正常显示
+bool gt_updateEnemyHUD(bool testConds, bool runActions){
+   
+    int ePlayer = EventPlayer();
+    int eUnitOwner = UnitGetOwner(EventUnit());
+    unit ePlayerCurrentHeroUnit = gv_71C054E5[ePlayer];
+    int value;
+    int index;
+    int propCount = 7;
+    //数值个数
+
+    //训练营模式下不显示
+    if (gv_AC56085D){
+        
+        return true;
+    }
+
+    if (testConds)
+    {
+        if (!((gv_BB284D6D != 5)))
+        {
+            return false;
+        }
+        if (!((UnitBehaviorCount(EventUnit(), "HallucinationTimedLife") == 0)))
+        {
+            return false;
+        }
+    }
+
+    if (!runActions){
+        return true;
+    }
+
+    //判定是否是敌方
+    if (ePlayer != eUnitOwner){
+        //设置image
+        gf_0B99E26F(ePlayer, eUnitOwner);
+        //修改为通过getunittype获得heroidstr，这样创建多个就不会出现问题
+        libNtve_gf_SetDialogItemImage(gv_2DED9336[1], gv_AA1BDB6C[StringToInt(StringSub(UnitGetType(EventUnit()),7,8))], PlayerGroupSingle(ePlayer));
+        libNtve_gf_SetDialogItemText(gv_2DED9336[2], FixedToTextAdvanced(gv_893C301B[eUnitOwner], c_formatNumberStyleNormal, true, 0, 1), PlayerGroupSingle(ePlayer));
+        libNtve_gf_SetDialogItemColor(gv_2DED9336[3], libNtve_gf_ConvertPlayerColorToColor(PlayerGetColorIndex(eUnitOwner, false)), PlayerGroupSingle(ePlayer));
+        libNtve_gf_SetDialogItemText(gv_2DED9336[3], PlayerName(eUnitOwner), PlayerGroupSingle(ePlayer));
+
+        // for (index = 0;index <= propCount; i+=1){
+        //     libNtve_gf_SetDialogItemText(gv_D33859CA[index], 
+        //         FixedToTextAdvanced(gv_9CB902A4[eUnitOwner][gv_B48492BD[index]],
+        //              c_formatNumberStyleNormal, true, 0, 2), PlayerGroupSingle(ePlayer));
+        // } 
+    
+
+        libNtve_gf_SetDialogItemText(gv_D33859CA[8], 
+            (IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropLife, c_unitPropCurrent)))
+             + (StringExternal("Param/Value/858C3123") + 
+             IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropLifeMax, c_unitPropCurrent))))),
+              PlayerGroupSingle(ePlayer));
+        
+             libNtve_gf_SetDialogItemText(gv_D33859CA[9], 
+            (IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropEnergy, c_unitPropCurrent)))
+             + (StringExternal("Param/Value/7EE57AF9") + 
+             IntToText(FixedToInt(UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropEnergyMax, c_unitPropCurrent))))),
+              PlayerGroupSingle(ePlayer));
+        
+             value = FixedToInt((268.0 * (UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropLifePercent, c_unitPropCurrent) * 0.01)));
+        if ((value == 0))
+        {
+            value = 1;
+        }
+        DialogControlSetSize(gv_2DED9336[4], PlayerGroupSingle(ePlayer), value, 16);
+        value = FixedToInt((268.0 * (UnitGetPropertyFixed(ePlayerCurrentHeroUnit, c_unitPropEnergyPercent, c_unitPropCurrent) * 0.01)));
+        if ((value == 0))
+        {
+            value = 1;
+        }
+        DialogControlSetSize(gv_2DED9336[5], PlayerGroupSingle(ePlayer), value, 16);
+        DialogSetVisible(gv_4EE04C84, PlayerGroupSingle(ePlayer), true);
+    }
+
+    return true;
+}
