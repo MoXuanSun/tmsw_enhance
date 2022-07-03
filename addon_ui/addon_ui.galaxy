@@ -285,6 +285,16 @@ void heroSummonUI(){
         DEFAULTS.DEFAULT_PLAYERGROUP,false);
 
 }
+
+//1.技能选择
+//2.辅助技能选择
+//3.辅助天赋选择
+//4.初始点数选择
+//5.属性加点
+void abilitySwitching(){
+    
+}
+
 //1.升级英雄
 //2.开启无cd -> 关闭
 //3.删除指定英雄
