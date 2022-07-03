@@ -1,0 +1,85 @@
+//GongSunink 2022
+bool tryLockUIClick(){
+    if (DataTableGetBool(true,"UILockedFor"+IntToString(EventPlayer()))){
+        return false;
+    }
+    DataTableSetBool(true,"UILockedFor"+IntToString(EventPlayer()),true);
+    return true;
+}
+
+void unlockUIClick(){
+    DataTableSetBool(true,"UILockedFor"+IntToString(EventPlayer()),false);
+}
+
+void onHeroSelectBtnClick(){
+
+    int heroIndex = (EventDialogControl() - gv_749EC876[0][0]) / 3;
+    string heroName = "dbHero"+addZero(heroIndex);
+
+    DataTableSetInt(true,"heroSelected-index",heroIndex);
+    DataTableSetString(true,"heroSelected-name",heroName);  
+
+    //更新图像
+    libNtve_gf_SetDialogItemImage(Dialogs.main_menu.heroSelectBtn.img,gv_AA1BDB6C[heroIndex],DEFAULTS.DEFAULT_PLAYERGROUP);
+    //更新tooltip
+    libNtve_gf_SetDialogItemTooltip(Dialogs.main_menu.heroSelectBtn.btn,"Button/Tooltip/btn_line_ability_" + gf_45491ABD(lv_5B232231) + "_s",DEFAULTS.DEFAULT_PLAYERGROUP);
+
+    DialogSetVisible(gv_277B64A1,PlayerGroupAll(),false);
+}
+
+void onSummonHeroBtnClick(bool allyOrEnemy){
+    
+    if (allyOrEnemy){
+        
+    }else{
+        
+    }   
+}
+
+bool gt_onTestBarClick(bool testConds, bool runActions){
+    
+    int eDialogControl = EventDialogControl();
+  
+    if (!tryLockUIClick()){
+        return true;
+    }
+
+    if (DialogControlGetDialog(eDialogControl) == gv_277B64A1){
+        onHeroSelectUIClick();
+        return true;
+    } 
+
+
+    if (eDialogControl == Dialogs.main_menu.heroSelectBtn.btn){
+
+        if (gv_277B64A1 == c_invalidDialogId){
+            TriggerExecute(gt_7903E3D3, true, true);
+            return true;
+        }
+        
+        if (DialogIsVisible(gv_277B64A1,1)){
+            DialogSetVisible(gv_277B64A1,PlayerGroupAll(),false);
+            //lock func
+            return true;
+        }
+
+        DialogSetVisible(gv_277B64A1,PlayerGroupAll(),true);
+       
+        
+        return true;
+    }
+
+    if (eDialogControl == Dialogs.main_menu.summonAllyHeroBtn.btn){
+        
+        return true;
+    }
+
+    if (eDialogControl == Dialogs.main_menu.summonEnemyHeroBtn.btn){
+
+        return true;
+    }
+    
+    unlockUIClick();
+
+    return true;   
+}

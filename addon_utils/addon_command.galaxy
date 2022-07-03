@@ -122,31 +122,31 @@ unit createEmpHero(int player,int id,int side){
     // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_4r", true);
     // UnitAbilityChangeLevel(UnitLastCreated(),"dbnu18_1_0q",3);
 
-    TechTreeUpgradeAddLevel(EventPlayer(), "dbup_e_stat_title0", 1);
-    TechTreeUpgradeAddLevel(EventPlayer(), gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(UnitLastCreated()),7,8)))], 1);
+    // TechTreeUpgradeAddLevel(EventPlayer(), "dbup_e_stat_title0", 1);
+    // TechTreeUpgradeAddLevel(EventPlayer(), gv_heroEstatStr[gf_3761C93C(StringToInt(StringSub(UnitGetType(UnitLastCreated()),7,8)))], 1);
 
-    
+    printString(PlayerGroupSingle(1),getUpgradeRegistered("dhup_geum_q"));
 
     // TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus",1);
     // TechTreeUpgradeAddLevel(1,"dbup_ablv_q_plus_2",1);
     
-    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
-    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
-    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
-    // TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
+    TechTreeUpgradeAddLevel(1, "dhup_geum_q", 1);
 
     // // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q",1);
     // // TechTreeUpgradeAddLevel(1,"dhup_skillJ_q_00",1);
 
-    // //RNM add = set 真不知道暴雪怎么想的 为什么不分开成两个方法 debug way: 问了一圈 忙了一下午 还不如在文档里面搜索这个函数看看，。。。
+    // 设置为负数可以减少等级
     // UnitAbilityEnable(UnitLastCreated(), "dbnu18_1_1q", true);
     // UnitAbilityShow(UnitLastCreated(), "dbnu18_1_1q", true);
     
-    // showMsg(1,IntToString(TechTreeUpgradeCount(1,"dbup_ablv_q_plus",c_techCountCompleteOnly)));
-
-
-    showMsg(1,FixedToString(PointGetX(UnitGetPosition(UnitLastCreated())),2)
-    +"|"+FixedToString(PointGetY(UnitGetPosition(UnitLastCreated())),2));
+    showMsg(1,IntToString(TechTreeUpgradeCount(1,"dhup_geum_q",c_techCountCompleteOnly)));
+    // libNtve_gf_ShareVisionofUnit()
+    printString(PlayerGroupSingle(1),getUpgradeRegistered("dhup_geum_q"));
+    // showMsg(1,FixedToString(PointGetX(UnitGetPosition(UnitLastCreated())),2)
+    // +"|"+FixedToString(PointGetY(UnitGetPosition(UnitLastCreated())),2));
     // TimerStart(time,5.0,false,c_timeGame);
 
     // UnitXPSetCurrentLevel(UnitLastCreated(),null,MinI(UnitXPGetCurrentLevel(UnitLastCreated(),null) + 1,36));
@@ -206,7 +206,7 @@ void testRandomFixed(int player,int times){
     int i = 0;
     fixed random = 0.0;
     int randomToint = 0;
-    string report ="";
+    string report = "";
     int j = 0;
 
     for (; i < times ; i+=1){

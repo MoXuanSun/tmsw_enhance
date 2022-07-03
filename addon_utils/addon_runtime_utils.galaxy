@@ -1,0 +1,15 @@
+//GongSunink 2022
+
+//id = index
+
+int getPlayerHeroId(int inPlayer){
+    return gv_131E8983[inPlayer];
+}
+
+string queryHeroNameById(int heroId){
+    return gv_367C7760[heroId];
+}
+
+bool isSinglePlayerMode(){
+    return gv_AC56085D;
+}

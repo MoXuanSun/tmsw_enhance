@@ -1,0 +1,12 @@
+//GongSunink 2022
+
+struct summonParmas{
+    
+};
+
+//创建英雄 测试模式下可用
+
+void summonHeroforPlayer(int player,string heroName, structref<summonParmas> params){
+    
+    
+}

@@ -154,7 +154,7 @@ bool gt_loadSpSkillTrigger(bool testConds,bool runActions){
     //克劳连续WA
     //绑定在attact指令触发
     //触发器绑定在attack指令上，触发时会随机生成0~100的一个浮点数，
-    //这个随机数是用于判断是否暴击的(判断方法是这个数是否小于暴击百分比。。。简单粗暴)
+    //这个随机数是用于判断是否暴击的(判断方法是这个数是否小于暴击百分比)
     // 然后判断攻击指令是否指向一个单位，如果指向一个单位继续判断，
     // 如果attack的下一个指令是move且move指令移动的距离大于0.08且attack攻击的单位距离克劳小于3.4+攻击距离*0.18
     // 给与一个效果，可以让克劳平a一次
@@ -164,7 +164,7 @@ bool gt_loadSpSkillTrigger(bool testConds,bool runActions){
     //克劳连续wa -- move指令判断
     TriggerEnable(gt_B8A29486, true);
 
-    //爱丽丝R技能效果
+    //爱丽丝R技能
     TriggerEnable(gt_D5601087, true);
 
     //克劳技能
@@ -218,6 +218,8 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     //更新dialog
     TriggerExecute(gt_85BAD3D9, false, false);
 
+    createDialogs();
+
     //随机播放音乐
     gf_1C2570FD(1);
 
@@ -236,9 +238,7 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     //更新数据
     gf_1A8469C6();
 
-    TechTreeRequirementsEnable(1,false);
     
-
     //Timer 测试模式不显示
     // gf_9F5F6F17();
     
@@ -276,8 +276,11 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     TriggerEnable(gt_B5F15D4C, true);
 
     ///-----------------------------------test
-    //回蓝回血
-    TriggerEnable(gt_A334548C,false);
+    //测试模式下关闭回蓝回血
+    if (PlayerName(1) == "本地玩家"){
+        TriggerEnable(gt_A334548C,false);
+    }
+    
 
     showMsg(1,"加载完毕~!");
     return true;

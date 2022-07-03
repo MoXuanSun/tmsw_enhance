@@ -1,0 +1,448 @@
+//GongSunink 2022
+
+//1.生成英雄 可选择队友或敌方
+//2.添加天赋
+//3.无cd
+//4.获得敌方视野
+//5.可控制敌方单位
+//6.无敌
+//7.显示伤害显示面板
+//8.升级 +1级 
+
+//8.技能切换
+//9.辅助技能切换
+//10.生成膜
+
+//11.克劳 可出刀 命中
+//12.开启智能施法
+
+//--------------------------------------local variables------------------------------------
+
+struct defaultConstances{
+    string DEFAULT_TITLE;
+    string DEFAULT_TOOLTIP;
+    string DEFAULT_IMG;
+    string DEFAULT_BORDERDDS;
+    string DEFAULT_BTNIMG;
+    string DEFAULT_BTNHOVERIMG;
+    playergroup DEFAULT_PLAYERGROUP;
+    string DEFAULT_FONTSTYLE;
+};
+
+defaultConstances DEFAULTS;
+
+struct normalBtnWithBoderAndImg{
+    int border;
+    int img;
+    int btn;
+    int textLabal;
+};
+
+typedef normalBtnWithBoderAndImg nbbi;
+
+struct mainMenu{
+
+    int self;
+
+    nbbi heroSelectBtn;
+
+    nbbi summonAllyHeroBtn;
+
+    nbbi summonEnemyHeroBtn;
+
+    nbbi upgradeHeroBtn;
+
+    nbbi noCoolDownBtn;
+
+    nbbi noDieBtn;
+
+    nbbi removeHeroBtn;
+
+    nbbi getEmemyVision;
+    
+    nbbi getEmemyControl;
+
+    nbbi freezeEmemy;
+
+    nbbi showDamagePanel;
+
+    nbbi forceReflashDamagePanel;
+};
+
+struct Dialog{
+    mainMenu main_menu;
+};
+
+//所有dialog的管理者对象
+Dialog Dialogs;
+
+int padding = 10;
+
+//-------------------------local func-------------------------
+
+//----------------------------utils------------------------
+
+//
+int createNormalImgControl(int rootDialog,int width, int height, int anchor, 
+    int offsetX, int offsetY, string img){
+
+    return libNtve_gf_CreateDialogItemImage(rootDialog, width, height,
+        anchor, offsetX, offsetY, empText, img, c_triggerImageTypeNormal, false, Color(100, 100, 100), c_triggerBlendModeNormal);
+}
+
+int createNormalImgControlWithRelativePosition(int rootDialog,int width, int height,int relative,
+     int relativeAnchor, int offsetX, int offsetY, string img, 
+     playergroup inPlayergroup){
+    
+    createNormalImgControl(rootDialog,width,height,c_anchorCenter,0,0,img);
+
+    DialogControlSetPositionRelative(DialogControlLastCreated(), inPlayergroup, c_anchorCenter,
+        relative, relativeAnchor, offsetX, offsetY);
+    
+    return DialogControlLastCreated();
+}
+
+int createNormalBtnControl(int rootDialog,int width, int height,int anchor, 
+    int offsetX, int offsetY, string tooltip, string title,
+    string btnImg, string btnHoverImg, playergroup inPlayergroup){
+
+    libNtve_gf_CreateDialogItemButton(rootDialog, width, height, anchor, offsetX, offsetY,
+        StringToText(tooltip), StringToText(title), btnHoverImg);
+
+    libNtve_gf_SetDialogItemImage(DialogControlLastCreated(),btnImg,inPlayergroup);
+
+    return DialogControlLastCreated();
+}
+
+int createNormalBtnControlWithRelativePosition(int rootDialog,int width, int height, int relative , 
+    int relativeAnchor, int offsetX, int offsetY, string tooltip, 
+    string title,string btnImg, string btnHoverImg, playergroup inPlayergroup){
+
+    createNormalBtnControl(rootDialog, width, height, c_anchorCenter, 0, 0,
+        tooltip, title, btnImg ,btnHoverImg, inPlayergroup);
+    
+    DialogControlSetPositionRelative(DialogControlLastCreated(), inPlayergroup, c_anchorCenter,
+        relative, relativeAnchor, offsetX, offsetY);
+
+    return DialogControlLastCreated();
+}
+
+void createNbbi(structref<nbbi> nbbiRef,
+    int rootDialog,
+    int borderWidth,int borderHeight, int imgWidth , int imgHeight, int btnWidth, int btnHeight ,
+    int anchor , int offsetXFromEdge, int offsetYFromEdge , 
+    string borderDDS, string img,
+    string tooltip, string title, string fontStyle,
+    string btnImg, string btnHoverImg, 
+    playergroup inPlayergroup){
+
+    //默认值
+    if (rootDialog == -1){
+        rootDialog = DialogLastCreated();
+    }
+    if (borderDDS == null){
+        borderDDS = "Assets\\Textures\\btn-border-equipment_help.dds";
+    }
+    if (inPlayergroup == null){
+        inPlayergroup = PlayerGroupActive();
+    }   
+    if (img == null){
+        img = "GamesUis\\MyG_BTN_Alpha.dds";
+    }
+    if (btnImg == null){
+        btnImg = "GamesUis\\MyG_BTN_Alpha.dds";
+    }
+    if (btnHoverImg == null){
+        btnHoverImg = "GamesUis\\MyG_All_Blue.dds";
+    }
+
+    nbbiRef.border = createNormalImgControl(rootDialog,borderWidth,borderHeight,anchor,offsetXFromEdge,offsetYFromEdge,borderDDS);
+
+    nbbiRef.img = createNormalImgControlWithRelativePosition(rootDialog,imgWidth,imgHeight,nbbiRef.border
+            ,c_anchorCenter,0,0,
+            img,inPlayergroup);
+
+    if (fontStyle != null && title != null){
+        nbbiRef.btn = createNormalBtnControlWithRelativePosition(rootDialog,btnWidth,btnHeight,nbbiRef.border
+            ,c_anchorCenter,0,0,
+            tooltip,null,btnImg,btnHoverImg,inPlayergroup);
+
+        libNtve_gf_SetDialogItemStyle(nbbiRef.btn,fontStyle,inPlayergroup);
+        
+        libNtve_gf_SetDialogItemText(nbbiRef.btn,StringToText(title),inPlayergroup);
+
+    }else{
+        nbbiRef.btn = createNormalBtnControlWithRelativePosition(rootDialog,btnWidth,btnHeight,nbbiRef.border
+            ,c_anchorCenter,0,0,
+            tooltip,title,btnImg,btnHoverImg,inPlayergroup);
+    }
+
+    if (title == null){
+        DialogControlFadeTransparency(nbbiRef.btn,inPlayergroup,0,45.0);
+    }
+            
+}
+
+void createNBBIRelative(structref<nbbi> nbbiRef,
+    int rootDialog,
+    int borderWidth,int borderHeight, int imgWidth , int imgHeight, int btnWidth, int btnHeight ,
+    int ref , int offsetXFromEdge, int offsetYFromEdge , 
+    string borderDDS, string img,
+    string tooltip, string title, string fontStyle, 
+    string btnImg, string btnHoverImg, 
+    playergroup inPlayergroup,
+    bool nextLine){
+
+    //默认值
+    if (rootDialog == -1){
+        rootDialog = DialogLastCreated();
+    }
+    if (borderDDS == null){
+        borderDDS = "Assets\\Textures\\btn-border-equipment_help.dds";
+    }
+    if (inPlayergroup == null){
+        inPlayergroup = PlayerGroupActive();
+    }    
+    if (img == null){
+        img ="GamesUis\\MyG_BTN_Alpha.dds";
+    }
+    if (btnImg == null){
+        btnImg = "GamesUis\\MyG_BTN_Alpha.dds";
+    }
+    if (btnHoverImg == null){
+        btnHoverImg = "GamesUis\\MyG_All_Blue.dds";
+    }
+
+    //因为函数dialogcontrolgetwidth必须传入一个player参数，故使用playergroupplayer从inPlayergroup获得一个玩家
+    if (nextLine){
+        nbbiRef.border = createNormalImgControlWithRelativePosition(rootDialog,borderWidth,borderHeight
+            ,ref,c_anchorBottom,offsetXFromEdge
+            ,DialogControlGetWidth(ref,PlayerGroupPlayer(inPlayergroup,1)) / 2 + padding,
+            borderDDS,inPlayergroup);
+    }else{
+        nbbiRef.border = createNormalImgControlWithRelativePosition(rootDialog,borderWidth,borderHeight
+            ,ref,c_anchorRight,DialogControlGetWidth(ref,PlayerGroupPlayer(inPlayergroup,1)) / 2 + padding
+            ,offsetYFromEdge,
+            borderDDS,inPlayergroup);
+    }
+    
+    nbbiRef.img = createNormalImgControlWithRelativePosition(rootDialog,imgWidth,imgHeight,nbbiRef.border
+        ,c_anchorCenter,0,0,
+        img,inPlayergroup);
+        
+    if (fontStyle != null && title != null){
+        nbbiRef.btn = createNormalBtnControlWithRelativePosition(rootDialog,btnWidth,btnHeight,nbbiRef.border
+            ,c_anchorCenter,0,0,
+            tooltip,title,btnImg,btnHoverImg,inPlayergroup);
+
+        libNtve_gf_SetDialogItemStyle(nbbiRef.btn,fontStyle,inPlayergroup);
+
+    }else{
+        nbbiRef.btn = createNormalBtnControlWithRelativePosition(rootDialog,btnWidth,btnHeight,nbbiRef.border
+            ,c_anchorCenter,0,0,
+            tooltip,title,btnImg,btnHoverImg,inPlayergroup);
+    }
+
+    if (title == null){
+        DialogControlFadeTransparency(nbbiRef.btn,inPlayergroup,0,45.0);
+    }
+    
+}
+
+//-----------------------------------ui-----------------------------------------------
+//英雄生成ui
+void heroSummonUI(){
+    
+    int borderWidth = 96;
+    int borderHeight = 96;
+
+    int imgWidth = 96;
+    int imgHeight = 96;
+
+    int btnWidth = 86;
+    int btnHeight = 86;
+
+    // string t = "Button/Tooltip/btn_line_ability_" + gf_45491ABD(lv_5B232231) + "_s";
+
+    createNbbi(Dialogs.main_menu.heroSelectBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        c_anchorTopLeft,padding,padding,DEFAULTS.DEFAULT_BORDERDDS,gv_AA1BDB6C[0],"请选择英雄",
+        DEFAULTS.DEFAULT_TITLE,DEFAULTS.DEFAULT_FONTSTYLE,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP);
+
+    createNBBIRelative(Dialogs.main_menu.summonAllyHeroBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.heroSelectBtn.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,DEFAULTS.DEFAULT_IMG,DEFAULTS.DEFAULT_TOOLTIP,
+        "+敌方",DEFAULTS.DEFAULT_FONTSTYLE,
+        DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+
+    createNBBIRelative(Dialogs.main_menu.summonEnemyHeroBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.summonAllyHeroBtn.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,DEFAULTS.DEFAULT_IMG,DEFAULTS.DEFAULT_TOOLTIP,
+        "+友方",DEFAULTS.DEFAULT_FONTSTYLE,
+        DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+
+}
+//1.升级英雄
+//2.开启无cd -> 关闭
+//3.删除指定英雄
+//4.为指定单位开启无敌
+//5.获得敌方视野 -> 取消
+//6.获得敌方操控权限 -> 取消
+//7.使敌方英雄静止不动
+void testingUI(){
+
+    int borderWidth = 96;
+    int borderHeight = 96;
+
+    int imgWidth = 88;
+    int imgHeight = 88;
+
+    int btnWidth = 86;
+    int btnHeight = 86; 
+    
+
+    createNBBIRelative(Dialogs.main_menu.upgradeHeroBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.heroSelectBtn.border,0,padding,DEFAULTS.DEFAULT_BORDERDDS,"GamesUis\\MYG_Skill_Plus_BTN.dds",
+        "升级选中单位"
+        ,DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,true);
+
+    createNBBIRelative(Dialogs.main_menu.noCoolDownBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.upgradeHeroBtn.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,"character/newroon/new_tuc_touhou_mabub_0_line_a.dds",
+        "给予选中单位无冷却效果",
+        DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE , DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+
+    createNBBIRelative(Dialogs.main_menu.noDieBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.noCoolDownBtn.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,"character/newroon/new_tuc_touhou_gyul_1_line_a.dds",
+        "给予选中单位无敌效果",
+        DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+    
+    createNBBIRelative(Dialogs.main_menu.getEmemyVision,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.upgradeHeroBtn.border,0,padding,DEFAULTS.DEFAULT_BORDERDDS,"Character/btn/00_Spell_2_3.dds",
+        "获取敌方视野",
+        DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,true);
+
+    createNBBIRelative(Dialogs.main_menu.getEmemyControl,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.getEmemyVision.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,"Assets\\Textures\\btn-ability-protoss-mindcontrol.dds",
+        "获取敌方控制",
+        DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+
+    createNBBIRelative(Dialogs.main_menu.freezeEmemy,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.getEmemyControl.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,"character/btn/03_1_4r.dds",
+        "冻结敌方英雄",
+        DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+
+     createNBBIRelative(Dialogs.main_menu.removeHeroBtn,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.getEmemyVision.border,0,padding,DEFAULTS.DEFAULT_BORDERDDS,"character/newroon/new_tuc_touhou_jibae_1_line_b.dds",
+        "移除选中英雄",
+        DEFAULTS.DEFAULT_TITLE, DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,true);
+
+    createNBBIRelative(Dialogs.main_menu.showDamagePanel,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.removeHeroBtn.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,DEFAULTS.DEFAULT_IMG,
+        "显示一个伤害计算面板，当攻击敌人时面板会记录敌人受到的伤害;如果10秒内没有造成伤害则刷新",
+        "显示伤害面板", DEFAULTS.DEFAULT_FONTSTYLE,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+
+
+    createNBBIRelative(Dialogs.main_menu.forceReflashDamagePanel,-1,borderWidth,borderHeight,imgWidth,imgHeight,btnWidth,btnHeight,
+        Dialogs.main_menu.showDamagePanel.border,padding,0,DEFAULTS.DEFAULT_BORDERDDS,DEFAULTS.DEFAULT_IMG,
+        "强制刷新伤害计算面板",
+        "刷新伤害面板", DEFAULTS.DEFAULT_FONTSTYLE ,DEFAULTS.DEFAULT_BTNIMG,
+        DEFAULTS.DEFAULT_BTNHOVERIMG,
+        DEFAULTS.DEFAULT_PLAYERGROUP,false);
+       
+}
+
+void runtimeUI(){
+
+}
+
+void createMainMenu(){
+
+    //1.创建主菜单
+    Dialogs.main_menu.self = DialogCreate(400,800,c_anchorTopRight,0,0,false); 
+    //2.设置可见性
+    DialogSetVisible(DialogLastCreated(),PlayerGroupActive(),true);
+    //3.设置背景不可见
+    // DialogSetImage(DialogLastCreated(),"my_roon_system_border_4_teal_com.dds");   
+    DialogSetImageVisible(DialogLastCreated(),false);
+
+//-------------------dialog controls------------------
+
+    heroSummonUI();
+
+    testingUI();
+
+    //创建英雄ui
+    // TriggerExecute(gt_7903E3D3, true, true);
+
+    // DialogSetVisible(gv_277B64A1,PlayerGroupAll(),true);
+    // TriggerExecute(gt_509C5828,true,true);
+  
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[0],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[1],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[2],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[3],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[4],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_363036CF[1][7],PlayerGroupActive(),true);
+    TriggerExecute(gt_05A513C7, true, true);
+    DialogControlSetEnabled(gv_170BE4AF[0], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[1], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[2], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[3], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[4], PlayerGroupAll(), true);
+   
+    // DialogControlSetVisible(gv_ECE9BB7D[0], PlayerGroupAll(), true);
+    // DialogControlSetVisible(gv_ECE9BB7D[1], PlayerGroupAll(), true);
+    // DialogControlSetVisible(gv_ECE9BB7D[2], PlayerGroupAll(), true);
+    // DialogControlSetVisible(gv_ECE9BB7D[3], PlayerGroupAll(), true);
+
+    DialogSetPositionRelative(gv_D2306AF3,c_anchorCenter,Dialogs.main_menu.self,c_anchorLeft, 300 /2 + padding , 96 + 48 +padding);
+ 
+    DialogControlSetVisible(gv_52C3727B[0],PlayerGroupAll(),false);
+
+    DialogControlSetVisible(gv_52C3727B[1],PlayerGroupAll(),false);
+    
+    DialogControlSetVisible( gv_52C3727B[2],PlayerGroupAll(),false);
+
+} 
+
+void createDamagePanel(){
+    // 1.创建伤害显示面板 默认不显示
+    DialogCreate(300,200,c_anchorBottomLeft,0,300,false);
+    DialogSetVisible(DialogLastCreated(),PlayerGroupSingle(1),false);
+    // DialogSetImageVisible(DialogLastCreated(),true);    
+}
+
+
+
+//----------------------------------global func----------------------------
+
+void createDialogs(){
+    createMainMenu();
+    createDamagePanel();
+    TriggerAddEventDialogControl(TriggerCreate("gt_onTestBarClick"),c_playerAny,c_invalidDialogControlId,c_triggerControlEventTypeClick);
+    
+}

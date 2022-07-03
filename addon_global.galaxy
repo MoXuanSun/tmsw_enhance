@@ -5,6 +5,7 @@ fixed[1000] gv_nums;
 
 int gv_dataTableDynamicData;
 
+text empText; 
 struct abilityAndSkillsPreData{
     int[gv_958F1679 + 1][5] heroAblityData;
     int[gv_958F1679 + 1][5][5] heroSkillMaxlevelData;
@@ -44,23 +45,23 @@ fixed getHeroPropert(unit inUnit,int index);
 
 int getHerolastUpgradeSkillIndex(unit inUnit);
 
-void setTechRegistered(string tech);
+void setUpgrade(string inUpgrade);
 
-void setTechRegisteredLevel(unit inUnit, string tech , int level);
+void setUnitUpgradeDynamicLevel(unit inUnit, string inUpgrade , int level);
 
-int getTechRegisteredLevel(unit inUnit, string tech);
+int getUpgradeRegisteredLevel(unit inUnit, string inUpgrade);
 
-string getTechRegistered(int index);
+int getUpgradeRegisteredIndex(string inUpgrade);
 
-int getTechRegisteredIndex();
+int getUpgradeRegisteredIndexGlobal();
 
-void dynamicSwitchTechTree();
+void dynamicSwitchUpgradeTree();
 
-void setTechNeedDynamicSwitch();
+void setUpgradeNeedDynamicSwitch();
 
 void dynamicSwitchData();
 
-void initOverwriteTrigger();
+void initTriggers();
 
 void initGlobalValues();
 
@@ -75,3 +76,13 @@ void printBool(playergroup inPlayerGroup, bool value);
 void printf(playergroup inPlayerGroup, text msg, int messageArea);
 
 void printDefault(playergroup inPlayerGroup, text msg);
+
+void TechTreeUpgradeSetDynamicLevel(int inPlayer, unit inUnit, string inUpgrade, int level);
+
+int getPlayerHeroId(int inPlayer);
+
+string queryHeroNameById(int heroId);
+
+void createDialogs();
+
+bool isSinglePlayerMode();

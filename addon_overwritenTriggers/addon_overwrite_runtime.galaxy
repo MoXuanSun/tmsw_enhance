@@ -76,5 +76,6 @@ bool gt_updateEnemyHUD(bool testConds, bool runActions){
         DialogSetVisible(gv_4EE04C84, PlayerGroupSingle(ePlayer), true);
     }
 
+
     return true;
 }

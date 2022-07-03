@@ -3,11 +3,12 @@ bool gt_dynamicSwitching(bool testConds, bool runActions){
     int ePlayer = EventPlayer();
     unit eUnit = EventUnit();
 
+    UnitSelect(gv_71C054E5[ePlayer], ePlayer, false);
+    //取消选择
+
     //保存上一个单位的信息
     //更新新单位的信息
     dynamicSwitchData();
-    //取消选择
-    UnitSelect(gv_71C054E5[ePlayer], ePlayer, false);
     
     // UnitBehaviorRemove(EventUnit(), "nodie2", 1);
     //hero skills

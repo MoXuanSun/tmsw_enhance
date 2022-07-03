@@ -8,7 +8,7 @@
 //gt_D70D94F7 -> gt_loadSpSkillTrigger
 //gt_ED707C50 -> gt_loadTrainMode
 //gt_CF5EF86B -> gt_gt_dynamicSwitching unitClick
-void initOverwriteTrigger(){
+void initTriggers(){
 
     if (gt_5E391F04 != null){
         TriggerDestroy(gt_5E391F04);
@@ -64,4 +64,9 @@ void initOverwriteTrigger(){
     gt_CF5EF86B = TriggerCreate("gt_dynamicSwitching");
     TriggerEnable(gt_CF5EF86B, false);
     TriggerAddEventUnitClick(gt_CF5EF86B, null, c_playerAny);
+
+
+//-----------------------------------拓展------------------------------------------
+
+    TriggerAddEventUpgradeLevelChanged(TriggerCreate("gt_onUnitUpgradeLevelChange"),c_playerAny);
 }
