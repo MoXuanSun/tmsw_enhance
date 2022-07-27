@@ -13,3 +13,7 @@ string queryHeroNameById(int heroId){
 bool isSinglePlayerMode(){
     return gv_AC56085D;
 }
+
+string getHeroTooltip(int heroId){
+    return StringExternal("Button/Tooltip/btn_line_ability_" + gf_45491ABD(heroId) + "_s");
+}

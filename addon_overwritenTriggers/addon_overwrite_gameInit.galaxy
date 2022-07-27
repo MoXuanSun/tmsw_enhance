@@ -191,8 +191,8 @@ bool gt_loadSpSkillTrigger(bool testConds,bool runActions){
 //gt_ED707C50
 bool gt_loadTrainMode(bool testConds,bool runActions){
     int playerid = 1;
+
     //进入效果
-    
     DialogControlFadeTransparency(gv_D3F35143, PlayerGroupAll(), 2.0, 100.0);
     SoundPlay(SoundLink("UI_ConsoleIn_Prot2", -1), PlayerGroupAll(), 100.0, 0.0);
 
@@ -230,6 +230,12 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     VisRevealerEnable(VisRevealerLastCreated(), true);
     //共享控制
     PlayerSetAlliance(9,c_allianceIdControl,1,true);
+
+    //玩家1与2-4结盟，与5-10敌对 ，5-10互相结盟
+    for (playerid = 2; playerid <= 5 ; playerid +=1){
+        libNtve_gf_SetAlliance(1,playerid,libNtve_ge_AllianceSetting_Ally);
+        
+    }
 
     ///----------------------------------
     //创建小头像
@@ -276,7 +282,7 @@ bool gt_loadTrainMode(bool testConds,bool runActions){
     TriggerEnable(gt_B5F15D4C, true);
 
     ///-----------------------------------test
-    //测试模式下关闭回蓝回血
+    //本地测试下关闭回蓝回血
     if (PlayerName(1) == "本地玩家"){
         TriggerEnable(gt_A334548C,false);
     }

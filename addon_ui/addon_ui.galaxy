@@ -78,11 +78,7 @@ Dialog Dialogs;
 
 int padding = 10;
 
-//-------------------------local func-------------------------
-
 //----------------------------utils------------------------
-
-//
 int createNormalImgControl(int rootDialog,int width, int height, int anchor, 
     int offsetX, int offsetY, string img){
 
@@ -251,13 +247,13 @@ void createNBBIRelative(structref<nbbi> nbbiRef,
 
 //-----------------------------------ui-----------------------------------------------
 //英雄生成ui
-void heroSummonUI(){
+void buildHeroSummonUI(){
     
     int borderWidth = 96;
     int borderHeight = 96;
 
-    int imgWidth = 96;
-    int imgHeight = 96;
+    int imgWidth = 86;
+    int imgHeight = 86;
 
     int btnWidth = 86;
     int btnHeight = 86;
@@ -291,8 +287,44 @@ void heroSummonUI(){
 //3.辅助天赋选择
 //4.初始点数选择
 //5.属性加点
-void abilitySwitching(){
+void buildAbilitySwitchingUI(){
+      //创建英雄ui
+    // TriggerExecute(gt_7903E3D3, true, true);
+
+    // DialogSetVisible(gv_277B64A1,PlayerGroupAll(),true);
+    // TriggerExecute(gt_509C5828,true,true);
+  
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[0],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[1],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[2],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[3],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[4],PlayerGroupActive(),true);
+
+    // DialogSetVisible(gv_363036CF[1][7],PlayerGroupActive(),true);
+    TriggerExecute(gt_05A513C7, true, true);
+    DialogControlSetEnabled(gv_170BE4AF[0], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[1], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[2], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[3], PlayerGroupAll(), true);
+    DialogControlSetEnabled(gv_170BE4AF[4], PlayerGroupAll(), true);
+   
+    // DialogControlSetVisible(gv_ECE9BB7D[0], PlayerGroupAll(), true);
+    // DialogControlSetVisible(gv_ECE9BB7D[1], PlayerGroupAll(), true);
+    // DialogControlSetVisible(gv_ECE9BB7D[2], PlayerGroupAll(), true);
+    // DialogControlSetVisible(gv_ECE9BB7D[3], PlayerGroupAll(), true);
+
+    DialogSetPositionRelative(gv_D2306AF3,c_anchorCenter,Dialogs.main_menu.self,c_anchorLeft, 300 /2 + padding , 96 + 48 +padding);
+ 
+    DialogControlSetVisible(gv_52C3727B[0],PlayerGroupAll(),false);
+
+    DialogControlSetVisible(gv_52C3727B[1],PlayerGroupAll(),false);
     
+    DialogControlSetVisible( gv_52C3727B[2],PlayerGroupAll(),false);
+
 }
 
 //1.升级英雄
@@ -302,7 +334,7 @@ void abilitySwitching(){
 //5.获得敌方视野 -> 取消
 //6.获得敌方操控权限 -> 取消
 //7.使敌方英雄静止不动
-void testingUI(){
+void buildTestingUI(){
 
     int borderWidth = 96;
     int borderHeight = 96;
@@ -396,47 +428,12 @@ void createMainMenu(){
 
 //-------------------dialog controls------------------
 
-    heroSummonUI();
+    buildHeroSummonUI();
 
-    testingUI();
+    buildTestingUI();
 
-    //创建英雄ui
-    // TriggerExecute(gt_7903E3D3, true, true);
-
-    // DialogSetVisible(gv_277B64A1,PlayerGroupAll(),true);
-    // TriggerExecute(gt_509C5828,true,true);
+    buildAbilitySwitchingUI();
   
-    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[0],PlayerGroupActive(),true);
-
-    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[1],PlayerGroupActive(),true);
-
-    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[2],PlayerGroupActive(),true);
-
-    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[3],PlayerGroupActive(),true);
-
-    // DialogSetVisible(gv_BB156610.lv_5C8CC8E9[4],PlayerGroupActive(),true);
-
-    // DialogSetVisible(gv_363036CF[1][7],PlayerGroupActive(),true);
-    TriggerExecute(gt_05A513C7, true, true);
-    DialogControlSetEnabled(gv_170BE4AF[0], PlayerGroupAll(), true);
-    DialogControlSetEnabled(gv_170BE4AF[1], PlayerGroupAll(), true);
-    DialogControlSetEnabled(gv_170BE4AF[2], PlayerGroupAll(), true);
-    DialogControlSetEnabled(gv_170BE4AF[3], PlayerGroupAll(), true);
-    DialogControlSetEnabled(gv_170BE4AF[4], PlayerGroupAll(), true);
-   
-    // DialogControlSetVisible(gv_ECE9BB7D[0], PlayerGroupAll(), true);
-    // DialogControlSetVisible(gv_ECE9BB7D[1], PlayerGroupAll(), true);
-    // DialogControlSetVisible(gv_ECE9BB7D[2], PlayerGroupAll(), true);
-    // DialogControlSetVisible(gv_ECE9BB7D[3], PlayerGroupAll(), true);
-
-    DialogSetPositionRelative(gv_D2306AF3,c_anchorCenter,Dialogs.main_menu.self,c_anchorLeft, 300 /2 + padding , 96 + 48 +padding);
- 
-    DialogControlSetVisible(gv_52C3727B[0],PlayerGroupAll(),false);
-
-    DialogControlSetVisible(gv_52C3727B[1],PlayerGroupAll(),false);
-    
-    DialogControlSetVisible( gv_52C3727B[2],PlayerGroupAll(),false);
-
 } 
 
 void createDamagePanel(){
@@ -446,9 +443,7 @@ void createDamagePanel(){
     // DialogSetImageVisible(DialogLastCreated(),true);    
 }
 
-
-
-//----------------------------------global func----------------------------
+//----------------------------------register----------------------------
 
 void createDialogs(){
     createMainMenu();

@@ -1,4 +1,4 @@
-int addZero(int num){
+string addZero(int num){
     if (num < 10){
         return "0"+IntToString(num);
     }
