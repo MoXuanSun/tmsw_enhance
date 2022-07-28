@@ -1,5 +1,8 @@
 //GongSunink 2022
 
+bool[10] playerNotAvailable;
+int[2] playerAvailableCurrent;
+
 //简易ui线程锁
 bool tryLockUIClick(){
     if (DataTableGetBool(true,"UILockedFor"+IntToString(EventPlayer()))){
@@ -33,13 +36,25 @@ void onHeroSelectUIClick(){
 }
 
 void onSummonHeroBtnClick(bool allyOrEnemy){
-    
+
+    int i = 0;
+
     if (allyOrEnemy){
-        
+        summonHeroforPlayer(playerAvailableCurrent[0],DataTableGetString(true,heroSelected-name),null);
+        playerNotAvailable[playerAvailableCurrent[0]] = true;
     }
     else{
-        
+        summonHeroforPlayer(playerAvailableCurrent[1],DataTableGetString(true,heroSelected-name),null);
+        playerNotAvailable[playerAvailableCurrent[0]] = true;
     }   
+
+    for (; i < 10;i+=1){
+        if (!(playerNotAvailable[i]&&playerNotAvailable[i +5 ])){
+            playerAvailableCurrent[0] = i;
+            playerAvailableCurrent[1] = i + 5;
+        }
+    }
+    
 }
 
 void onUpgradeHeroBtnClick(){

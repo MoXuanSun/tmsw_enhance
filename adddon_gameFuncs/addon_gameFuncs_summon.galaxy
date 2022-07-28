@@ -4,9 +4,17 @@ struct summonParmas{
     
 };
 
-//创建英雄 测试模式下可用
+void applyAdditionalEffect(unit inHeroUnit,int inPlayer){
+    
+}
 
-void summonHeroforPlayer(int player,string heroName, structref<summonParmas> params){
+//创建英雄 测试模式下可用
+void summonHeroforPlayer(int inPlayer,string heroName, structref<summonParmas> params){
+    if (params == null){
+
+    }
     
-    
+    // libNtve_gf_CreateUnitsWithDefaultFacing(1,heroName,0,player,);
+
+    applyAdditionalEffect(UnitLastCreated(),inPlayer);
 }

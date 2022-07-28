@@ -248,7 +248,6 @@ void testRandomFixed(int player,int times){
         }
     }
     showMsg(1,report);
-
     
 }
 
