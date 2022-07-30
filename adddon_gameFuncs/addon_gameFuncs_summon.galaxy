@@ -1,8 +1,16 @@
 //GongSunink 2022
 
 struct summonParmas{
-    
+    int skillGroupId;
+    int d;
+    int f;
+    int g;
 };
+
+
+void summonShiled(int round){
+
+}
 
 void applyAdditionalEffect(unit inHeroUnit,int inPlayer){
     
@@ -13,7 +21,7 @@ void summonHeroforPlayer(int inPlayer,string heroName, structref<summonParmas> p
     if (params == null){
 
     }
-    
+      
     // libNtve_gf_CreateUnitsWithDefaultFacing(1,heroName,0,player,);
 
     applyAdditionalEffect(UnitLastCreated(),inPlayer);
